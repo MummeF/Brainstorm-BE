@@ -13,4 +13,10 @@ public class MainController {
         return "Hello, I am alive!";
     }
 
+    @RequestMapping(path = "/",
+            method = RequestMethod.GET)
+    public String Startseite() {
+        return "Hallo, ist da die krosse Krabbe? Nein, hier ist Patrick!";
+    }
+
 }
