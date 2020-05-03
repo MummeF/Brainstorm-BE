@@ -29,11 +29,7 @@ public class MainController {
     @RequestMapping(path = "/rndRoomId",
             method = RequestMethod.GET)
     public ResponseEntity<Room> rndRoomId() {
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        return ResponseEntity.ok()
-                .headers(responseHeaders)
-                .body(mainService.generateRandomSessionId());
+        return ResponseEntity.ok(mainService.generateRandomSessionId());
     }
 
     @RequestMapping(path = "/validateRoomId",
