@@ -2,6 +2,7 @@ package com.dhbwstudent.brainstormbe.main;
 
 import com.dhbwstudent.brainstormbe.model.Room;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +16,8 @@ public class MainController {
     @RequestMapping(path = "/isAlive",
             method = RequestMethod.GET)
     public ResponseEntity<String> isAlive() {
-        return ResponseEntity.ok("Hello, I am alive!");
+        return ResponseEntity.ok("Hello, I am alive!")
+                ;
     }
 
     @RequestMapping(path = "/",
@@ -27,7 +29,11 @@ public class MainController {
     @RequestMapping(path = "/rndRoomId",
             method = RequestMethod.GET)
     public ResponseEntity<Room> rndRoomId() {
-        return ResponseEntity.ok(mainService.generateRandomSessionId());
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        return ResponseEntity.ok()
+                .headers(responseHeaders)
+                .body(mainService.generateRandomSessionId());
     }
 
     @RequestMapping(path = "/validateRoomId",
