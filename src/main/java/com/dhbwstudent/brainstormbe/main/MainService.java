@@ -1,6 +1,7 @@
 package com.dhbwstudent.brainstormbe.main;
 
 
+import com.dhbwstudent.brainstormbe.model.Room;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,10 +16,12 @@ import java.util.List;
 
         }
 
-        public long generateRandomSessionId() {
-            long sessionId = (long) (Math.random() * 999999);
-            sessionIds.add(sessionId);
-            return sessionId;
+        public Room generateRandomSessionId() {
+            long roomId = (long) (Math.random() * 999999);
+            sessionIds.add(roomId);
+            return Room.builder()
+                    .id(roomId)
+                    .build();
         }
 
         public boolean validateSessionId(long sessionId) {
