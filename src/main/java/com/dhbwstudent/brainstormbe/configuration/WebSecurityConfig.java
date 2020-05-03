@@ -15,8 +15,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .cors();
+        http.authorizeRequests().anyRequest()
+                .authenticated()
+                .and().cors()
+                .and().csrf().disable();
     }
 
 
@@ -29,7 +31,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .addMapping("/**")
                         .allowedOrigins(
                                 "http://localhost:3000",
-                                "http://brainstorm-dhbw.herokuapps.com"
+                                "https://brainstorm-dhbw.herokuapps.com"
                         );
             }
         };
