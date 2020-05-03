@@ -6,7 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = {"http://localhost:3000", "http://brainstorm-dhbw.herokuapps.com"})
+@CrossOrigin(origins = {"http://localhost:3000", "https://brainstorm-dhbw.herokuapp.com"})
 @RestController
 public class MainController {
     @Autowired
