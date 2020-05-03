@@ -2,11 +2,10 @@ package com.dhbwstudent.brainstormbe.main;
 
 import com.dhbwstudent.brainstormbe.model.Room;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = {"http://localhost:3000", "https://brainstorm-dhbw.herokuapp.com"})
+@CrossOrigin(origins = {"http://localhost:3000", "https://brainstorm-dhbw.herokuapp.com", "https://brainstorm-dhbw.herokuapp.com"})
 @RestController
 public class MainController {
     @Autowired
