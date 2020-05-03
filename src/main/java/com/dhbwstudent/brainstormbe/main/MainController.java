@@ -3,7 +3,7 @@ package com.dhbwstudent.brainstormbe.main;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = {"http://localhost:3000/", "http://brainstorm-dhbw.herokuapps.com/"}, allowedHeaders = "*")
+@CrossOrigin(origins = {"http://localhost:3000", "http://brainstorm-dhbw.herokuapps.com"}, allowedHeaders = "*")
 @RestController
 public class MainController {
     @Autowired
