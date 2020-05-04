@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class Room {
+public class RoomModel {
     private long id;
+    private String topic;
 }

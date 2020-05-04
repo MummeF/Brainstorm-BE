@@ -1,30 +1,43 @@
 package com.dhbwstudent.brainstormbe.api.main;
 
 
-import com.dhbwstudent.brainstormbe.model.Room;
+import com.dhbwstudent.brainstormbe.model.RoomModel;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
     @Service
     public class MainService {
 
-        private List<Long> sessionIds = new ArrayList<>();
+        private HashMap<Long, RoomModel> idToRoom = new HashMap<>();
 
         public MainService() {
 
         }
 
-        public Room generateRandomSessionId() {
-            long roomId = (long) (Math.random() * 999999);
-            sessionIds.add(roomId);
-            return Room.builder()
+        public Long generateRandomSessionId() {
+            long roomId = (long) (Math.random() * 899999) + 100000;
+            idToRoom.put(roomId,
+                    RoomModel.builder()
                     .id(roomId)
-                    .build();
+                    .build());
+            return roomId;
         }
 
-        public boolean validateSessionId(long sessionId) {
-            return sessionIds.stream().anyMatch(id -> id == sessionId);
+        public boolean validateRoomId(long roomId) {
+            return idToRoom.containsKey(roomId);
         }
-}
+
+        public RoomModel getRoom(long roomId) {
+            return idToRoom.get(roomId);
+        }
+
+        public boolean updateRoom(RoomModel roomModel) {
+            if(idToRoom.containsKey(roomModel.getId())){
+                idToRoom.remove(roomModel.getId());
+                idToRoom.put(roomModel.getId(), roomModel);
+                return true;
+            }
+            return false;
+        }
+    }
