@@ -1,4 +1,4 @@
-package com.dhbwstudent.brainstormbe.configuration;
+package com.dhbwstudent.brainstormbe.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,8 +12,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .cors();
+        http.authorizeRequests()
+                .anyRequest().authenticated()
+                .and().httpBasic()
+                .and().cors()
+                .and().csrf().disable();
 
     }
 

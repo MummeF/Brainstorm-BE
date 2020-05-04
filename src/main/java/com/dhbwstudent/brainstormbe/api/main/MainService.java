@@ -1,4 +1,4 @@
-package com.dhbwstudent.brainstormbe.main;
+package com.dhbwstudent.brainstormbe.api.main;
 
 
 import com.dhbwstudent.brainstormbe.model.Room;
