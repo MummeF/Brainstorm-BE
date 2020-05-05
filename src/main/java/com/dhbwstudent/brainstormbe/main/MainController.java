@@ -21,19 +21,19 @@ public class MainController {
     @RequestMapping(path = "/",
             method = RequestMethod.GET)
     public String Startseite() {
-        return "Hallo, ist da die krosse Krabbe? Nein, hier ist Patrick!";
+        return "Was ist gelb, hat einen Arm, und kann nicht schwimmen?! EIN BAGGER";
     }
 
-    @RequestMapping(path = "/rndSessionId",
+    @RequestMapping(path = "/createRoom",
             method = RequestMethod.GET)
-    public long rndSessionId() {
-        return mainService.generateRandomSessionId();
-    }
+    public long createRoom() {
+        return mainService.createRoom("Thema!!");
+    } //TODO User muss Thema eingeben und der URL übergeben!!
 
-    @RequestMapping(path = "/validateSessionId",
+    @RequestMapping(path = "/validateRoomId",
             method = RequestMethod.GET)
-    public boolean validateSessionId(@RequestParam long sessionId){
-        return mainService.validateSessionId(sessionId);
+    public boolean validateRoomId(@RequestParam long roomId){
+        return mainService.validateRoomId(roomId);
     }
 
 }
