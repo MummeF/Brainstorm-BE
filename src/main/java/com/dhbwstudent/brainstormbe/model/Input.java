@@ -1,4 +1,4 @@
-package com.dhbwstudent.brainstormbe.input;
+package com.dhbwstudent.brainstormbe.model;
 
 public class Input {
     private static long id = 0;

@@ -4,6 +4,7 @@ package com.dhbwstudent.brainstormbe.api.main;
 import com.dhbwstudent.brainstormbe.model.RoomModel;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @Service
@@ -21,6 +22,7 @@ public class MainService {
                 RoomModel.builder()
                         .id(roomId)
                         .topic("")
+                        .inputs(new ArrayList<>())
                         .build());
         return roomId;
     }
@@ -35,7 +37,8 @@ public class MainService {
 
     public boolean updateRoom(RoomModel roomModel) {
         if (idToRoom.containsKey(roomModel.getId())) {
-            idToRoom.remove(roomModel.getId());
+            RoomModel removed = idToRoom.remove(roomModel.getId());
+            roomModel.setInputs(removed.getInputs());
             idToRoom.put(roomModel.getId(), roomModel);
             return true;
         }
