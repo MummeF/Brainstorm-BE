@@ -1,5 +1,6 @@
 package com.dhbwstudent.brainstormbe.api.main;
 
+import com.dhbwstudent.brainstormbe.model.Contribution;
 import com.dhbwstudent.brainstormbe.model.RoomModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +58,14 @@ public class MainController {
 
         }
         return ResponseEntity.badRequest().body("Could not find roomModel with id '" + roomModel.getId() + "'");
+    }
+
+    @RequestMapping(path = "/addContribution")
+    public ResponseEntity<String> addContribution(@RequestBody Contribution contribution, @RequestParam long roomId){
+        if(this.mainService.addContribution(contribution, roomId)){
+            return ResponseEntity.ok("Successfully added Contribution to Room with id '" + roomId + "'");
+        }
+        return ResponseEntity.badRequest().body("Could not find roomModel with id '" + roomId + "'");
     }
 
 }

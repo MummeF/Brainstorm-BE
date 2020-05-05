@@ -13,12 +13,11 @@ public class RoomModel {
     @Setter(AccessLevel.NONE)
     private long id;
     private String topic;
-    private ArrayList<Input> inputs = new ArrayList<>();
-
-    public void addInput(List<Input> inputs){
-        this.inputs.addAll(inputs);
+    private ArrayList<Contribution> contributions = new ArrayList<>();
+    public void addContribution(List<Contribution> contributions){
+        this.contributions.addAll(contributions);
     }
-    public void addInput(Input input){
-        this.inputs.add(input);
+    public void addContribution(Contribution contribution){
+        this.contributions.add(contribution);
     }
 }
