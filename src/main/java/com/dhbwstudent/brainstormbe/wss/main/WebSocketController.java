@@ -13,7 +13,6 @@ import java.security.Principal;
 
 @Slf4j
 @Controller
-@CrossOrigin(origins = {"http://localhost:3000", "https://brainstorm-dhbw.herokuapp.com", "http://brainstorm-dhbw.herokuapp.com"})
 public class WebSocketController {
 
     @Autowired
