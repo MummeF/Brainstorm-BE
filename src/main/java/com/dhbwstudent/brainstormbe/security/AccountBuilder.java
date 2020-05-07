@@ -22,6 +22,11 @@ public class AccountBuilder extends GlobalAuthenticationConfigurerAdapter {
     public void init(final AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(this.userDetailsService());
     }
+    @Autowired
+    public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.inMemoryAuthentication().withUser("fe-tech-user").password("+vq#3RL!ygE%f&HLM?t_").roles("ADMIN");
+        auth.userDetailsService(this.userDetailsService());
+    }
 
     @Bean
     UserDetailsService userDetailsService() {
