@@ -60,12 +60,51 @@ public class MainController {
         return ResponseEntity.badRequest().body("Could not find roomModel with id '" + roomModel.getId() + "'");
     }
 
-    @RequestMapping(path = "/addContribution")
-    public ResponseEntity<String> addContribution(@RequestBody Contribution contribution, @RequestParam long roomId){
-        if(this.mainService.addContribution(contribution, roomId)){
+    @RequestMapping(path = "/addContribution",
+            method = RequestMethod.POST)
+    public ResponseEntity<String> addContribution(@RequestBody Contribution contribution, @RequestParam long roomId) {
+        if (this.mainService.addContribution(contribution, roomId)) {
             return ResponseEntity.ok("Successfully added Contribution to Room with id '" + roomId + "'");
         }
         return ResponseEntity.badRequest().body("Could not find roomModel with id '" + roomId + "'");
     }
 
+    @RequestMapping(path = "/deleteContribution",
+            method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteContribution(@RequestParam long roomId, @RequestParam long contributionId) {
+        if (mainService.deleteContribution(roomId, contributionId)) {
+            return ResponseEntity.ok("Successfully deletet Contribution!");
+        }
+        return ResponseEntity.badRequest().body("Unable to find room or the belonging contribution");
+
+    }
+
+    @RequestMapping(path = "/updateContribution",
+            method = RequestMethod.PUT)
+    public ResponseEntity<String> updateContribution(@RequestParam long roomId, @RequestParam long contributionId, @RequestParam String content) {
+        if (mainService.updateContribution(roomId, contributionId, content)) {
+            return ResponseEntity.ok("Successfully updated Contribution!");
+        }
+        return ResponseEntity.badRequest().body("Unable to find room or the belonging contribution");
+    }
+
+    @RequestMapping(path = "/deleteRoom",
+            method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteRoom(@RequestParam long roomId) {
+        if (mainService.deleteRoom(roomId)) {
+            return ResponseEntity.ok("Successfully deleted room!");
+        }
+        return ResponseEntity.badRequest().body("Unable to find room with Id '+" + roomId + "'");
+    }
+
+    @RequestMapping(path = "/getContribution",
+            method = RequestMethod.GET)
+
+    public ResponseEntity<Contribution> getContribution(@RequestParam long roomId, @RequestParam long contributionId) {
+        Contribution contribution = mainService.getContribution(roomId, contributionId);
+        if (contribution != null) {
+            return ResponseEntity.ok(contribution);
+        }
+        return ResponseEntity.badRequest().body(null);
+    }
 }
