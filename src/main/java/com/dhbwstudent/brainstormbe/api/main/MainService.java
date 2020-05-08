@@ -164,6 +164,7 @@ public class MainService {
         }
     }
 
+
     public boolean addUserName(String userName, long roomId) {
         if (idToRoom.containsKey(roomId)) {
             boolean userExists = users.stream()
