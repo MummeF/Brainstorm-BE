@@ -4,6 +4,7 @@ package com.dhbwstudent.brainstormbe.api.main;
 import com.dhbwstudent.brainstormbe.model.Contribution;
 import com.dhbwstudent.brainstormbe.model.RoomModel;
 import com.dhbwstudent.brainstormbe.model.User;
+import com.dhbwstudent.brainstormbe.wss.main.model.WebSocketResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +35,9 @@ public class MainService {
     }
 
     public Long generateRandomSessionId() {
-        long roomId = (long) (Math.random() * 899999) + 100000;;
-        while(idToRoom.containsKey(roomId)){
+        long roomId = (long) (Math.random() * 899999) + 100000;
+        ;
+        while (idToRoom.containsKey(roomId)) {
             roomId = (long) (Math.random() * 899999) + 100000;
         }
         idToRoom.put(roomId,
@@ -123,14 +125,26 @@ public class MainService {
     public void updateUser() {
         users.forEach(user ->
                 user.getSubscribedRooms().forEach(roomId -> {
-                    try {
-                        simpMessagingTemplate.convertAndSendToUser(user.getName(), "/topic/room",
-                                objectMapper.writeValueAsString(idToRoom.get(roomId)));
-                    } catch (JsonProcessingException e) {
-                        e.printStackTrace();
-                    }
+                    sendToUser(user.getName(), idToRoom.get(roomId));
                 })
         );
+    }
+
+    private void sendToUser(String username, RoomModel room) {
+        try {
+            sendToUser(username, new WebSocketResponse(objectMapper.writeValueAsString(room), "data"));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendToUser(String userName, WebSocketResponse response) {
+        try {
+            simpMessagingTemplate.convertAndSendToUser(userName, "/topic/room",
+                    objectMapper.writeValueAsString(response));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     public void informUserAboutDeletedRoom(long deletedRoomId) {
@@ -141,8 +155,7 @@ public class MainService {
                     if (!user.anyRoomSubscribed()) {
                         users.remove(user);
                     }
-                    simpMessagingTemplate.convertAndSendToUser(user.getName(), "/topic/room",
-                            "deleted room with id "+ roomId);
+                    sendToUser(user.getName(), new WebSocketResponse("deleted room with id " + roomId, "delete"));
                 }
             });
         }

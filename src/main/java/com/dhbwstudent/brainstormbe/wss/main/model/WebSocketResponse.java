@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Subscription {
-    private long roomId;
+public class WebSocketResponse {
+    private String content;
+    private String type;
 }

@@ -1,13 +1,13 @@
 package com.dhbwstudent.brainstormbe.wss.main.configuration;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.security.Principal;
-import java.util.UUID;
 
 @AllArgsConstructor
-public class StompPrincipal implements Principal {
-
+@NoArgsConstructor
+public class WebSocketPrincipal implements Principal {
     private String name;
 
     @Override

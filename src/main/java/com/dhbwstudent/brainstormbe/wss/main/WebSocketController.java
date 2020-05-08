@@ -1,7 +1,8 @@
 package com.dhbwstudent.brainstormbe.wss.main;
 
 import com.dhbwstudent.brainstormbe.api.main.MainService;
-import com.dhbwstudent.brainstormbe.wss.main.model.Subscription;
+import com.dhbwstudent.brainstormbe.wss.main.model.WebSocketMessage;
+import com.dhbwstudent.brainstormbe.wss.main.model.WebSocketResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -17,15 +18,19 @@ public class WebSocketController {
     @Autowired
     private MainService mainService;
 
-    @MessageMapping("/subscribeForRoom")
+    @MessageMapping("/subscribe")
     @SendToUser("/topic/room")
-    public String subscribe(Subscription subscription, Principal principal) {
-        log.info("Subscribed for ID {} from {}", subscription.getRoomId(), principal.getName());
-        if(mainService.addUserName(principal.getName(), subscription.getRoomId())){
-
-            return "Successfully subscribed!";
-        }else{
-            return "Room not found";
+    public WebSocketResponse subscribe(WebSocketMessage webSocketMessage, Principal principal) {
+        try {
+            log.info("received message: {} from {}", webSocketMessage, principal.getName());
+            if (mainService.addUserName(principal.getName(), webSocketMessage.getRoomId())) {
+                return new WebSocketResponse("Successfully subscribed!", "success");
+            } else {
+                return new WebSocketResponse("Room not found", "error");
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return new WebSocketResponse("An error occured: " + e.getMessage(), "error");
         }
     }
 }

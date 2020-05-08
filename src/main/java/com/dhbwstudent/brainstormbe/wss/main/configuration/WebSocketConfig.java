@@ -18,9 +18,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOrigins("*")
-        .setHandshakeHandler(new HandshakeHandler());
-        registry.addEndpoint("/ws").setAllowedOrigins("*")
-        .setHandshakeHandler(new HandshakeHandler()).withSockJS();
+        registry.addEndpoint("/websocket")
+                .setAllowedOrigins("*")
+                .setHandshakeHandler(new WebsocketHandshakeHandler());
     }
+
 }
