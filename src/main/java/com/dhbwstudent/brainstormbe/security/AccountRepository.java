@@ -16,7 +16,7 @@ public class AccountRepository {
         this.addAcc(Account.builder()
                 .name("fe-tech-user")
                 .password("+vq#3RL!ygE%f&HLM?t_")
-                .role(Role.Admin)
+                .role(Role.User)
                 .build());
     }
 
