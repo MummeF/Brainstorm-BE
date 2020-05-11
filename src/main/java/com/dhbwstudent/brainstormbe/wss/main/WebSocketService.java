@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -14,13 +15,14 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class WebSocketService {
 
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
+    private SimpMessagingTemplate messenger;
 
 
     @Getter(AccessLevel.PUBLIC)
@@ -34,9 +36,9 @@ public class WebSocketService {
         return users.remove(user);
     }
 
-    public void sendToUser(String username, Room room) {
+    public void sendToUser(String userName, Room room) {
         try {
-            sendToUser(username, new WebSocketResponse(objectMapper.writeValueAsString(room), "data"));
+            sendToUser(userName, new WebSocketResponse(objectMapper.writeValueAsString(room), "data"));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -44,7 +46,8 @@ public class WebSocketService {
 
     public void sendToUser(String userName, WebSocketResponse response) {
         try {
-            simpMessagingTemplate.convertAndSendToUser(userName, "/topic/room",
+            log.info("Sent message to user {} : {}", userName, objectMapper.writeValueAsString(response));
+            messenger.convertAndSendToUser(userName, "/topic/room",
                     objectMapper.writeValueAsString(response));
         } catch (JsonProcessingException e) {
             e.printStackTrace();

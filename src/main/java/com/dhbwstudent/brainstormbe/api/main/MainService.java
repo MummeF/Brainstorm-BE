@@ -161,4 +161,19 @@ public class MainService {
         idToRoom.values().toArray(response);
         return response;
     }
+
+    public boolean unSubscribe(String name, long roomId) {
+        if(WebSocketService.getUsers().stream().anyMatch(user -> user.getName().equals(name))){
+            for (User user : WebSocketService.getUsers()) {
+                if (user.getName().equals(name)) {
+                    boolean response =  user.unsubscribe(roomId);
+                    if (!user.anyRoomSubscribed()) {
+                        WebSocketService.removeUser(user);
+                    }
+                    return response;
+                }
+            }
+        }
+        return false;
+    }
 }

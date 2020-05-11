@@ -33,4 +33,20 @@ public class WebSocketController {
             return new WebSocketResponse("An error occured: " + e.getMessage(), "error");
         }
     }
+
+    @MessageMapping("/unsubscribe")
+    @SendToUser("/topic/room")
+    public WebSocketResponse unsubscribe(WebSocketMessage webSocketMessage, Principal principal) {
+        try {
+            log.info("received unsubcribe: {} from {}", webSocketMessage, principal.getName());
+            if (mainService.unSubscribe(principal.getName(), webSocketMessage.getRoomId())) {
+                return new WebSocketResponse("Successfully unsubscribed!", "success");
+            } else {
+                return new WebSocketResponse("Room not found", "error");
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return new WebSocketResponse("An error occured: " + e.getMessage(), "error");
+        }
+    }
 }

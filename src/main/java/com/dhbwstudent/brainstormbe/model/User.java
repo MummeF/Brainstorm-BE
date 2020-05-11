@@ -17,7 +17,7 @@ public class User {
     }
 
     public boolean anyRoomSubscribed(){
-        return subscribedRooms.isEmpty();
+        return !subscribedRooms.isEmpty();
     }
 
     public void subscribe(long roomId){

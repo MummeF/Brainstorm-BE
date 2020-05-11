@@ -16,7 +16,10 @@ public class WebSocketScheduler {
 
     @Scheduled(fixedDelay = 50*1000, initialDelay = 1000)
     public void sendAlive(){
-        webSocketService.sendAlive();
+        if(!WebSocketService.getUsers().isEmpty()) {
+            log.info("heartbeat");
+            webSocketService.sendAlive();
+        }
     }
 
 }
