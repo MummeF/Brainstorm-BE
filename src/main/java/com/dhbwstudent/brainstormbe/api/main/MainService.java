@@ -4,17 +4,14 @@ package com.dhbwstudent.brainstormbe.api.main;
 import com.dhbwstudent.brainstormbe.model.Contribution;
 import com.dhbwstudent.brainstormbe.model.RoomModel;
 import com.dhbwstudent.brainstormbe.model.User;
+import com.dhbwstudent.brainstormbe.wss.main.WebSocketService;
 import com.dhbwstudent.brainstormbe.wss.main.model.WebSocketResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -23,16 +20,10 @@ public class MainService {
 
     private static HashMap<Long, RoomModel> idToRoom = new HashMap<>();
     private static HashMap<String, Long> userToRoomId = new HashMap<>();
-    private static List<User> users = new ArrayList<>();
+
 
     @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
-
-    public MainService() {
-
-    }
+    private WebSocketService webSocketService;
 
     public Long createRoom(String topic) {
         long roomId = (long) (Math.random() * 899999) + 100000;
@@ -122,29 +113,14 @@ public class MainService {
 
     //Websocket
     public void updateUser() {
-        users.forEach(user ->
+        WebSocketService.getUsers().forEach(user ->
                 user.getSubscribedRooms().forEach(roomId -> {
-                    sendToUser(user.getName(), idToRoom.get(roomId));
+                    webSocketService.sendToUser(user.getName(), idToRoom.get(roomId));
                 })
         );
     }
 
-    private void sendToUser(String username, RoomModel room) {
-        try {
-            sendToUser(username, new WebSocketResponse(objectMapper.writeValueAsString(room), "data"));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-    }
 
-    private void sendToUser(String userName, WebSocketResponse response) {
-        try {
-            simpMessagingTemplate.convertAndSendToUser(userName, "/topic/room",
-                    objectMapper.writeValueAsString(response));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void informUserAboutDeletedRoom(long deletedRoomId) {
         for (User user : users) {
@@ -166,12 +142,12 @@ public class MainService {
 
     public boolean addUserName(String userName, long roomId) {
         if (idToRoom.containsKey(roomId)) {
-            boolean userExists = users.stream()
+            boolean userExists = WebSocketService.getUsers().stream()
                     .anyMatch(user -> user.getName().equals(userName));
             if (!userExists) {
-                users.add(new User(userName));
+                WebSocketService.addUser(new User(userName));
             }
-            users.stream()
+            WebSocketService.getUsers().stream()
                     .filter(user -> user.getName().equals(userName))
                     .forEach(user -> user.subscribe(roomId));
             this.updateUser();

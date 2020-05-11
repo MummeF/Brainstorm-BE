@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 public class WebSocketScheduler {
     @Autowired
-    private MainService mainService;
+    private WebSocketService webSocketService;
 
-//    @Scheduled(fixedDelayString = "3000", initialDelayString = "0")
-//    public void schedulingTask(){
-//        mainService.sendMessages();
-//    }
+    @Scheduled(fixedDelay = 50*1000, initialDelay = 1000)
+    public void sendAlive(){
+        webSocketService.sendAlive();
+    }
 
 }
