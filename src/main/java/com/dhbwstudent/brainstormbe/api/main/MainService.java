@@ -112,7 +112,7 @@ public class MainService {
 
     //Websocket
     public void updateUser() {
-        WebSocketService.getUsers().forEach(user ->
+        users.forEach(user ->
                 user.getSubscribedRooms().forEach(roomId -> {
                     webSocketService.sendToUser(user.getName(), idToRoom.get(roomId));
                 })
@@ -141,7 +141,7 @@ public class MainService {
 
     public boolean addUserName(String userName, long roomId) {
         if (idToRoom.containsKey(roomId)) {
-            boolean userExists = WebSocketService.getUsers().stream()
+            boolean userExists = users.stream()
                     .anyMatch(user -> user.getName().equals(userName));
             if (!userExists) {
                 WebSocketService.addUser(new User(userName));
