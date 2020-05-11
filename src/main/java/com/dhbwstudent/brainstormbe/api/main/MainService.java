@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public class MainService {
 
     private static HashMap<Long, RoomModel> idToRoom = new HashMap<>();
-    private static HashMap<String, Long> userToRoomId = new HashMap<>();
 
 
     @Autowired
