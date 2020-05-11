@@ -1,7 +1,7 @@
 package com.dhbwstudent.brainstormbe.api.main;
 
 import com.dhbwstudent.brainstormbe.model.Contribution;
-import com.dhbwstudent.brainstormbe.model.RoomModel;
+import com.dhbwstudent.brainstormbe.model.Room;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +41,7 @@ public class MainController {
 
     @RequestMapping(path = "/getRoom",
             method = RequestMethod.GET)
-    public ResponseEntity<RoomModel> getRoom(@RequestParam long roomId) {
+    public ResponseEntity<Room> getRoom(@RequestParam long roomId) {
         if (mainService.validateRoomId(roomId)) {
             return ResponseEntity.ok(mainService.getRoom(roomId));
         } else {
@@ -51,14 +51,14 @@ public class MainController {
 
     @RequestMapping(path = "/updateRoom",
             method = RequestMethod.POST)
-    public ResponseEntity<String> updateRoom(@RequestBody RoomModel roomModel) {
-        if (this.mainService.validateRoomId(roomModel.getId())) {
-            if (this.mainService.updateRoom(roomModel)) {
-                return ResponseEntity.ok("Successfully update roomModel with id '" + roomModel.getId() + "'");
+    public ResponseEntity<String> updateRoom(@RequestBody Room room) {
+        if (this.mainService.validateRoomId(room.getId())) {
+            if (this.mainService.updateRoom(room)) {
+                return ResponseEntity.ok("Successfully update room with id '" + room.getId() + "'");
             }
 
         }
-        return ResponseEntity.badRequest().body("Could not find roomModel with id '" + roomModel.getId() + "'");
+        return ResponseEntity.badRequest().body("Could not find room with id '" + room.getId() + "'");
     }
 
     @RequestMapping(path = "/addContribution",
@@ -77,7 +77,12 @@ public class MainController {
             return ResponseEntity.ok("Successfully deletet Contribution!");
         }
         return ResponseEntity.badRequest().body("Unable to find room or the belonging contribution");
+    }
 
+    @RequestMapping(path = "/getRoomList",
+            method = RequestMethod.GET)
+    public ResponseEntity<Room[]> getRoomList(){
+        return ResponseEntity.ok(mainService.getAllRooms());
     }
 
     @RequestMapping(path = "/updateContribution",

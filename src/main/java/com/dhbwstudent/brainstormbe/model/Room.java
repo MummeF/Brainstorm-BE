@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoomModel {
+public class Room {
     @Setter(AccessLevel.NONE)
     private long id;
     private String topic;

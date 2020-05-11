@@ -2,7 +2,7 @@ package com.dhbwstudent.brainstormbe.api.main;
 
 
 import com.dhbwstudent.brainstormbe.model.Contribution;
-import com.dhbwstudent.brainstormbe.model.RoomModel;
+import com.dhbwstudent.brainstormbe.model.Room;
 import com.dhbwstudent.brainstormbe.model.User;
 import com.dhbwstudent.brainstormbe.wss.main.WebSocketService;
 import com.dhbwstudent.brainstormbe.wss.main.model.WebSocketResponse;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class MainService {
 
-    private static HashMap<Long, RoomModel> idToRoom = new HashMap<>();
+    private static HashMap<Long, Room> idToRoom = new HashMap<>();
 
 
     @Autowired
@@ -30,7 +30,7 @@ public class MainService {
             roomId = (long) (Math.random() * 899999) + 100000;
         }
         idToRoom.put(roomId,
-                RoomModel.builder()
+                Room.builder()
                         .id(roomId)
                         .topic(topic != null ? topic : "")
                         .contributions(new ArrayList<>())
@@ -43,15 +43,15 @@ public class MainService {
         return idToRoom.containsKey(roomId);
     }
 
-    public RoomModel getRoom(long roomId) {
+    public Room getRoom(long roomId) {
         return idToRoom.get(roomId);
     }
 
-    public boolean updateRoom(RoomModel roomModel) {
-        if (idToRoom.containsKey(roomModel.getId())) {
-            RoomModel removed = idToRoom.remove(roomModel.getId());
-            roomModel.setContributions(removed.getContributions());
-            idToRoom.put(roomModel.getId(), roomModel);
+    public boolean updateRoom(Room room) {
+        if (idToRoom.containsKey(room.getId())) {
+            Room removed = idToRoom.remove(room.getId());
+            room.setContributions(removed.getContributions());
+            idToRoom.put(room.getId(), room);
             this.updateUser();
             return true;
         }
@@ -156,4 +156,9 @@ public class MainService {
     }
 
 
+    public Room[] getAllRooms() {
+        Room[] response = new Room[idToRoom.values().size()];
+        idToRoom.values().toArray(response);
+        return response;
+    }
 }

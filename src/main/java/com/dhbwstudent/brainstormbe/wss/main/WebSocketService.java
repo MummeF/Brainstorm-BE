@@ -1,6 +1,6 @@
 package com.dhbwstudent.brainstormbe.wss.main;
 
-import com.dhbwstudent.brainstormbe.model.RoomModel;
+import com.dhbwstudent.brainstormbe.model.Room;
 import com.dhbwstudent.brainstormbe.model.User;
 import com.dhbwstudent.brainstormbe.wss.main.model.WebSocketResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -34,7 +34,7 @@ public class WebSocketService {
         return users.remove(user);
     }
 
-    public void sendToUser(String username, RoomModel room) {
+    public void sendToUser(String username, Room room) {
         try {
             sendToUser(username, new WebSocketResponse(objectMapper.writeValueAsString(room), "data"));
         } catch (JsonProcessingException e) {
