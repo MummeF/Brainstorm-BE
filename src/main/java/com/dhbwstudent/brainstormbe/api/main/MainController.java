@@ -27,10 +27,10 @@ public class MainController {
         return ResponseEntity.ok("Hallo, ist da die krosse Krabbe? Nein, hier ist Patrick!");
     }
 
-    @RequestMapping(path = "/rndRoomId",
+    @RequestMapping(path = "/createRoom",
             method = RequestMethod.GET)
-    public ResponseEntity<Long> rndRoomId() {
-        return ResponseEntity.ok(mainService.generateRandomSessionId());
+    public ResponseEntity<Long> createRoom(@RequestParam(required = false) String topic) {
+        return ResponseEntity.ok(mainService.createRoom(topic));
     }
 
     @RequestMapping(path = "/validateRoomId",

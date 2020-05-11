@@ -34,16 +34,15 @@ public class MainService {
 
     }
 
-    public Long generateRandomSessionId() {
+    public Long createRoom(String topic) {
         long roomId = (long) (Math.random() * 899999) + 100000;
-        ;
         while (idToRoom.containsKey(roomId)) {
             roomId = (long) (Math.random() * 899999) + 100000;
         }
         idToRoom.put(roomId,
                 RoomModel.builder()
                         .id(roomId)
-                        .topic("")
+                        .topic(topic != null ? topic : "")
                         .contributions(new ArrayList<>())
                         .build());
         this.updateUser();
