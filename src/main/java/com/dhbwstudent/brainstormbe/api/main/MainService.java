@@ -122,17 +122,15 @@ public class MainService {
 
 
     public void informUserAboutDeletedRoom(long deletedRoomId) {
-        for (User user : users) {
-            if(user.getSubscribedRooms() != null) {
-                for (int i = 0; i < user.getSubscribedRooms().size(); i++) {
-                    long roomId = user.getSubscribedRooms().get(i);
-                    if (roomId == deletedRoomId) {
-                        user.unsubscribe(deletedRoomId);
-                        if (!user.anyRoomSubscribed()) {
-                            users.remove(user);
-                        }
-                        sendToUser(user.getName(), new WebSocketResponse("deleted room with id " + roomId, "delete"));
+        for (User user : WebSocketService.getUsers()) {
+            for (int i = 0; i < user.getSubscribedRooms().size(); i++) {
+                long roomId = user.getSubscribedRooms().get(i);
+                if (roomId == deletedRoomId) {
+                    user.unsubscribe(deletedRoomId);
+                    if (!user.anyRoomSubscribed()) {
+                        WebSocketService.removeUser(user);
                     }
+                    webSocketService.sendToUser(user.getName(), new WebSocketResponse("deleted room with id " + roomId, "delete"));
                 }
             }
         }
