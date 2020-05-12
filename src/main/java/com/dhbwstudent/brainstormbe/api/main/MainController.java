@@ -2,6 +2,7 @@ package com.dhbwstudent.brainstormbe.api.main;
 
 import com.dhbwstudent.brainstormbe.model.Contribution;
 import com.dhbwstudent.brainstormbe.model.RoomModel;
+import com.dhbwstudent.brainstormbe.model.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,7 @@ public class MainController {
     @RequestMapping(path = "/isAlive",
             method = RequestMethod.GET)
     public ResponseEntity<String> isAlive() {
-        return ResponseEntity.ok("Hello, I am alive!")
-                ;
+        return ResponseEntity.ok("Hello, I am alive!");
     }
 
     @RequestMapping(path = "/",
@@ -29,8 +29,15 @@ public class MainController {
 
     @RequestMapping(path = "/createRoom",
             method = RequestMethod.GET)
-    public ResponseEntity<Long> createRoom(@RequestParam(required = false) String topic) {
-        return ResponseEntity.ok(mainService.createRoom(topic));
+    public ResponseEntity<Long> createRoom(@RequestParam(required = false) String topic, @RequestParam(required = false) boolean isPublic) {
+        return ResponseEntity.ok(mainService.createRoom(topic, isPublic)); //TODO: IsPublic in FE mitaufnehmen!
+    }
+
+    @RequestMapping(path = "/setPassword",
+            method = RequestMethod.POST)
+    //TODO: Endpunkt neu, in Frontend reinbringen
+    public ResponseEntity<Boolean> setPassword(@RequestParam long roomId, @RequestBody String password) {
+        return ResponseEntity.ok(mainService.setPassword(roomId, password));
     }
 
     @RequestMapping(path = "/validateRoomId",
@@ -59,6 +66,16 @@ public class MainController {
 
         }
         return ResponseEntity.badRequest().body("Could not find roomModel with id '" + roomModel.getId() + "'");
+    }
+
+    @RequestMapping(path = "/setRoomState",
+            method = RequestMethod.POST)
+    public ResponseEntity<String> setRoomState(@RequestParam long roomId,  @RequestParam State state) {
+        if (this.mainService.setRoomState(roomId, state)) {
+            return ResponseEntity.ok("Successfully set Room '" + roomId + "' to State '" + state.value() + "'");
+
+        }
+        return ResponseEntity.badRequest().body("Could not find roomModel with id '" + roomId + "'");
     }
 
     @RequestMapping(path = "/addContribution",

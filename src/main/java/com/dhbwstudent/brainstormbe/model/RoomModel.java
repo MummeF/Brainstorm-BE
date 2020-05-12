@@ -13,6 +13,10 @@ public class RoomModel {
     @Setter(AccessLevel.NONE)
     private long id;
     private String topic;
+    private State state;
+    private boolean isPublic;
+    @Getter(AccessLevel.NONE)
+    private String password = "";
     private ArrayList<Contribution> contributions = new ArrayList<>();
 
     public void addContribution(List<Contribution> contributions) {
@@ -41,5 +45,9 @@ public class RoomModel {
             }
         }
         return false;
+    }
+
+    public boolean passwordMatches(String aPassword) {
+        return (password.equals(aPassword));
     }
 }

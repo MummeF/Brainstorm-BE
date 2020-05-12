@@ -3,6 +3,7 @@ package com.dhbwstudent.brainstormbe.api.main;
 
 import com.dhbwstudent.brainstormbe.model.Contribution;
 import com.dhbwstudent.brainstormbe.model.RoomModel;
+import com.dhbwstudent.brainstormbe.model.State;
 import com.dhbwstudent.brainstormbe.model.User;
 import com.dhbwstudent.brainstormbe.wss.main.WebSocketService;
 import com.dhbwstudent.brainstormbe.wss.main.model.WebSocketResponse;
@@ -24,71 +25,101 @@ public class MainService {
     @Autowired
     private WebSocketService webSocketService;
 
-    public Long createRoom(String topic) {
-        long roomId = (long) (Math.random() * 899999) + 100000;
+    public Long createRoom(String topic, boolean isPublic) {
+        long roomId;
+        /* MITARBEITER WURDE FÜR FOLGENDEN CODE FRISTLOS ENTLASSEN:
+        roomId = (long) (Math.random() * 899999) + 100000;
         while (idToRoom.containsKey(roomId)) {
             roomId = (long) (Math.random() * 899999) + 100000;
-        }
+        }*/
+
+        do {
+            roomId = (long) (Math.random() * 899999) + 100000;
+        } while (validateRoomId(roomId));
+
         idToRoom.put(roomId,
                 RoomModel.builder()
                         .id(roomId)
                         .topic(topic != null ? topic : "")
                         .contributions(new ArrayList<>())
+                        .isPublic(isPublic)
                         .build());
         this.updateUser();
         return roomId;
+    }
+
+    public boolean setPassword(long roomId, String password) {
+        if (validateRoomId(roomId)) {
+            getRoom(roomId).setPassword(password != null ? password : "");
+            return true;
+        }
+        log.warn("Setting Password failed, given RoomID doesn't exist");
+        return false;
+    }
+
+    public boolean setRoomState(long roomId, State state) {
+        if (validateRoomId(roomId)) {
+            getRoom(roomId).setState(state);
+            return true;
+        }
+        log.warn("Setting State failed, given RoomID doesn't exist");
+        return false;
     }
 
     public boolean validateRoomId(long roomId) {
         return idToRoom.containsKey(roomId);
     }
 
-    public RoomModel getRoom(long roomId) {
+    public static RoomModel getRoom(long roomId) { //Da die HashMap auch static ist, spricht nix dagegen diese Methode ebenfalls static zu dekl.
         return idToRoom.get(roomId);
     }
 
     public boolean updateRoom(RoomModel roomModel) {
-        if (idToRoom.containsKey(roomModel.getId())) {
+        if (validateRoomId(roomModel.getId())) {
             RoomModel removed = idToRoom.remove(roomModel.getId());
             roomModel.setContributions(removed.getContributions());
             idToRoom.put(roomModel.getId(), roomModel);
             this.updateUser();
             return true;
         }
+        log.warn("Updating Room failed, given RoomID doesn't exist");
         return false;
     }
 
     public boolean addContribution(Contribution contribution, long roomId) {
-        if (idToRoom.containsKey(roomId)) {
-            idToRoom.get(roomId)
+        if (validateRoomId(roomId)) {
+            getRoom(roomId)
                     .addContribution(new Contribution(contribution.getContent()));
             this.updateUser();
             return true;
         }
+        log.warn("Adding Contribution failed, given RoomID doesn't exist");
         return false;
     }
 
     public boolean deleteContribution(long roomId, long contributionId) {
-        if (idToRoom.containsKey(roomId)) {
-            boolean res = idToRoom.get(roomId).removeContribution(contributionId);
+        if (validateRoomId(roomId)) {
+            boolean res = getRoom(roomId).removeContribution(contributionId);
             this.updateUser();
             return res;
         }
+        log.warn("Deleting Contribution failed, given RoomID doesn't exist");
         return false;
     }
 
     public boolean updateContribution(long roomId, long contributionId, String content) {
-        if (idToRoom.containsKey(roomId)) {
-            boolean res = idToRoom.get(roomId).updateContribution(contributionId, content);
+        if (validateRoomId(roomId)) {
+            boolean res = getRoom(roomId).updateContribution(contributionId, content);
             this.updateUser();
             return res;
         }
+        log.warn("Updating Contribution failed, given RoomID doesn't exist");
         return false;
     }
 
     public Contribution getContribution(long roomId, long contributionId) {
-        if (idToRoom.containsKey(roomId)) {
-            return idToRoom.get(roomId).getContributions().stream()
+        if (validateRoomId(roomId)) {
+            return getRoom(roomId).getContributions().stream()
                     .filter(contribution -> contribution.getId() == contributionId)
                     .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
                         if (list.isEmpty() || list.size() > 1) {
@@ -97,16 +128,18 @@ public class MainService {
                         return list.get(0);
                     }));
         }
+        log.warn("Retrieving Contribution failed, given RoomID doesn't exist");
         return null;
     }
 
     public boolean deleteRoom(long roomId) {
-        if (idToRoom.containsKey(roomId)) {
+        if (validateRoomId(roomId)) {
             idToRoom.remove(roomId);
             informUserAboutDeletedRoom(roomId);
             updateUser();
             return true;
         }
+        log.warn("Deleting Room failed, given RoomID doesn't exist");
         return false;
     }
 
@@ -114,12 +147,10 @@ public class MainService {
     public void updateUser() {
         WebSocketService.getUsers().forEach(user ->
                 user.getSubscribedRooms().forEach(roomId -> {
-                    webSocketService.sendToUser(user.getName(), idToRoom.get(roomId));
+                    webSocketService.sendToUser(user.getName(), getRoom(roomId));
                 })
         );
     }
-
-
 
     public void informUserAboutDeletedRoom(long deletedRoomId) {
         for (User user : WebSocketService.getUsers()) {
@@ -136,9 +167,8 @@ public class MainService {
         }
     }
 
-
     public boolean addUserName(String userName, long roomId) {
-        if (idToRoom.containsKey(roomId)) {
+        if (validateRoomId(roomId)) {
             boolean userExists = WebSocketService.getUsers().stream()
                     .anyMatch(user -> user.getName().equals(userName));
             if (!userExists) {
