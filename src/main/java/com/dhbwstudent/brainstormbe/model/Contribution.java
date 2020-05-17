@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 public class Contribution {
     private static long contributionIdNr = 0;
     String content;
+    String subject; //Für Gruppierung
     long id;
     public Contribution(String aContent) {
         this.content = aContent;

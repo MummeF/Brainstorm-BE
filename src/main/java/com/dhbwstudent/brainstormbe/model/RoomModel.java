@@ -14,6 +14,7 @@ public class RoomModel {
     private long id;
     private String topic;
     private State state;
+    private String moderatorId;
     private boolean isPublic;
     @Getter(AccessLevel.NONE)
     private String password = "";
@@ -37,10 +38,11 @@ public class RoomModel {
         return false;
     }
 
-    public boolean updateContribution(long contributionId, String content) {
+    public boolean updateContribution(long contributionId, String content, String subject) {
         for (int i = 0; i < contributions.size(); i++) {
             if (contributionId == contributions.get(i).getId()) {
                 contributions.get(i).setContent(content);
+                contributions.get(i).setSubject(subject);
                 return true;
             }
         }

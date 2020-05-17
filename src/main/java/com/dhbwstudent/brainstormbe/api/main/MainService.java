@@ -25,7 +25,7 @@ public class MainService {
     @Autowired
     private WebSocketService webSocketService;
 
-    public Long createRoom(String topic, boolean isPublic) {
+    public Long createRoom(String topic, boolean isPublic, String password, String moderatorId) {
         long roomId;
         /* MITARBEITER WURDE FÜR FOLGENDEN CODE FRISTLOS ENTLASSEN:
         roomId = (long) (Math.random() * 899999) + 100000;
@@ -43,6 +43,8 @@ public class MainService {
                         .topic(topic != null ? topic : "")
                         .contributions(new ArrayList<>())
                         .isPublic(isPublic)
+                        .password(password != null ? password : "")
+                        .moderatorId(moderatorId)
                         .build());
         this.updateUser();
         return roomId;
@@ -107,9 +109,9 @@ public class MainService {
         return false;
     }
 
-    public boolean updateContribution(long roomId, long contributionId, String content) {
+    public boolean updateContribution(long roomId, long contributionId, String content, String subject) {
         if (validateRoomId(roomId)) {
-            boolean res = getRoom(roomId).updateContribution(contributionId, content);
+            boolean res = getRoom(roomId).updateContribution(contributionId, content, subject != null ? subject : "");
             this.updateUser();
             return res;
         }

@@ -24,13 +24,14 @@ public class MainController {
     @RequestMapping(path = "/",
             method = RequestMethod.GET)
     public ResponseEntity<String> Startseite() {
-        return ResponseEntity.ok("Hallo, ist da die krosse Krabbe? Nein, hier ist Patrick!");
+        return ResponseEntity.ok("Wie man sieht, sieht man nichts");
     }
 
     @RequestMapping(path = "/createRoom",
             method = RequestMethod.GET)
-    public ResponseEntity<Long> createRoom(@RequestParam(required = false) String topic, @RequestParam(required = false) boolean isPublic) {
-        return ResponseEntity.ok(mainService.createRoom(topic, isPublic)); //TODO: IsPublic in FE mitaufnehmen!
+    public ResponseEntity<Long> createRoom(@RequestParam(required = false) String topic, @RequestParam boolean isPublic,
+                                           @RequestParam(required = false) String password, @RequestParam String moderatorId) {
+        return ResponseEntity.ok(mainService.createRoom(topic, isPublic, password, moderatorId)); //TODO: IsPublic, password, moderatorId in FE mitaufnehmen!
     }
 
     @RequestMapping(path = "/setPassword",
@@ -68,6 +69,7 @@ public class MainController {
         return ResponseEntity.badRequest().body("Could not find roomModel with id '" + roomModel.getId() + "'");
     }
 
+    //TODO: Endpunkt neu, in Frontend reinbringen
     @RequestMapping(path = "/setRoomState",
             method = RequestMethod.POST)
     public ResponseEntity<String> setRoomState(@RequestParam long roomId,  @RequestParam State state) {
@@ -99,8 +101,9 @@ public class MainController {
 
     @RequestMapping(path = "/updateContribution",
             method = RequestMethod.PUT)
-    public ResponseEntity<String> updateContribution(@RequestParam long roomId, @RequestParam long contributionId, @RequestParam String content) {
-        if (mainService.updateContribution(roomId, contributionId, content)) {
+    public ResponseEntity<String> updateContribution(@RequestParam long roomId, @RequestParam long contributionId,
+                                                     @RequestParam String content, @RequestParam(required = false) String subject) {
+        if (mainService.updateContribution(roomId, contributionId, content, subject)) {
             return ResponseEntity.ok("Successfully updated Contribution!");
         }
         return ResponseEntity.badRequest().body("Unable to find room or the belonging contribution");
