@@ -28,6 +28,10 @@ public class RoomModel {
         this.contributions.add(contribution);
     }
 
+    public boolean hasPassword(){
+        return this.password != null && !this.password.equals("");
+    }
+
     public boolean removeContribution(long contributionId) {
         for (int i = 0; i < contributions.size(); i++) {
             if (contributionId == contributions.get(i).getId()) {

@@ -48,8 +48,13 @@ public class MainController {
     }
     @RequestMapping(path = "/validatePassword",
             method = RequestMethod.POST)
-    public ResponseEntity<Boolean> validateRoomId(@RequestParam long roomId, @RequestBody String password) {
+    public ResponseEntity<Boolean> validatePassword(@RequestParam long roomId, @RequestBody String password) {
         return ResponseEntity.ok(mainService.validatePassword(roomId, password));
+    }
+    @RequestMapping(path = "/hasPassword",
+            method = RequestMethod.GET)
+    public ResponseEntity<Boolean> hasPassword(@RequestParam long roomId) {
+        return ResponseEntity.ok(mainService.hasPassword(roomId));
     }
 
 

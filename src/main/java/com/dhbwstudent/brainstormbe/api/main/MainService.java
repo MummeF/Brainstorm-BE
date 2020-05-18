@@ -195,4 +195,12 @@ public class MainService {
         log.warn("Given RoomId doesn't exist");
         return false;
     }
+
+    public boolean hasPassword(long roomId) {
+        if(validateRoomId(roomId)){
+            return idToRoom.get(roomId).hasPassword();
+        }
+        log.warn("Given RoomId doesn't exist");
+        return false;
+    }
 }
