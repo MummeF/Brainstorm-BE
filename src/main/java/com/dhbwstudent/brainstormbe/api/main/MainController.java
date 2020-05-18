@@ -46,6 +46,12 @@ public class MainController {
     public ResponseEntity<Boolean> validateRoomId(@RequestParam long roomId) {
         return ResponseEntity.ok(mainService.validateRoomId(roomId));
     }
+    @RequestMapping(path = "/validatePassword",
+            method = RequestMethod.POST)
+    public ResponseEntity<Boolean> validateRoomId(@RequestParam long roomId, @RequestBody String password) {
+        return ResponseEntity.ok(mainService.validatePassword(roomId, password));
+    }
+
 
     @RequestMapping(path = "/getRoom",
             method = RequestMethod.GET)
@@ -69,7 +75,6 @@ public class MainController {
             if (this.mainService.updateRoom(roomModel)) {
                 return ResponseEntity.ok("Successfully update roomModel with id '" + roomModel.getId() + "'");
             }
-
         }
         return ResponseEntity.badRequest().body("Could not find roomModel with id '" + roomModel.getId() + "'");
     }

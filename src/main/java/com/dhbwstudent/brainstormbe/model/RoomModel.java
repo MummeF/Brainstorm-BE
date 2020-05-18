@@ -52,4 +52,8 @@ public class RoomModel {
     public boolean passwordMatches(String aPassword) {
         return (password.equals(aPassword));
     }
+
+    public boolean validatePassword(String password) {
+        return password.equals(this.password);
+    }
 }

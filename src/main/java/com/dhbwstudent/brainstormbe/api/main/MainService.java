@@ -187,4 +187,12 @@ public class MainService {
         arr = idToRoom.values().toArray(arr);
         return arr;
     }
+
+    public boolean validatePassword(long roomId, String password) {
+        if(validateRoomId(roomId)){
+            return idToRoom.get(roomId).validatePassword(password);
+        }
+        log.warn("Given RoomId doesn't exist");
+        return false;
+    }
 }
