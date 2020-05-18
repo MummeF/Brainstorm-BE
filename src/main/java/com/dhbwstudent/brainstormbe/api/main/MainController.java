@@ -46,17 +46,24 @@ public class MainController {
     public ResponseEntity<Boolean> validateRoomId(@RequestParam long roomId) {
         return ResponseEntity.ok(mainService.validateRoomId(roomId));
     }
+
     @RequestMapping(path = "/validatePassword",
             method = RequestMethod.POST)
     public ResponseEntity<Boolean> validatePassword(@RequestParam long roomId, @RequestBody String password) {
         return ResponseEntity.ok(mainService.validatePassword(roomId, password));
     }
+
+    @RequestMapping(path = "/validateModeratorId",
+            method = RequestMethod.GET)
+    public ResponseEntity<Boolean> validateModeratorId(@RequestParam long roomId, @RequestParam String moderatorId) {
+        return ResponseEntity.ok(mainService.validateModeratorId(roomId, moderatorId));
+    }
+
     @RequestMapping(path = "/hasPassword",
             method = RequestMethod.GET)
     public ResponseEntity<Boolean> hasPassword(@RequestParam long roomId) {
         return ResponseEntity.ok(mainService.hasPassword(roomId));
     }
-
 
     @RequestMapping(path = "/getRoom",
             method = RequestMethod.GET)
@@ -67,6 +74,7 @@ public class MainController {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
     @RequestMapping(path = "/getRoomList",
             method = RequestMethod.GET)
     public ResponseEntity<RoomModel[]> getRoomList() {
