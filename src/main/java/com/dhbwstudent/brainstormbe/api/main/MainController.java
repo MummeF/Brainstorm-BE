@@ -56,6 +56,11 @@ public class MainController {
             return ResponseEntity.badRequest().body(null);
         }
     }
+    @RequestMapping(path = "/getRoomList",
+            method = RequestMethod.GET)
+    public ResponseEntity<RoomModel[]> getRoomList() {
+       return ResponseEntity.ok(mainService.getRoomList());
+    }
 
     @RequestMapping(path = "/updateRoom",
             method = RequestMethod.POST)

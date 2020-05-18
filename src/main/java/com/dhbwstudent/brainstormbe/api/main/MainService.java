@@ -27,12 +27,6 @@ public class MainService {
 
     public Long createRoom(String topic, boolean isPublic, String password, String moderatorId) {
         long roomId;
-        /* MITARBEITER WURDE FÜR FOLGENDEN CODE FRISTLOS ENTLASSEN:
-        roomId = (long) (Math.random() * 899999) + 100000;
-        while (idToRoom.containsKey(roomId)) {
-            roomId = (long) (Math.random() * 899999) + 100000;
-        }*/
-
         do {
             roomId = (long) (Math.random() * 899999) + 100000;
         } while (validateRoomId(roomId));
@@ -188,4 +182,9 @@ public class MainService {
     }
 
 
+    public RoomModel[] getRoomList() {
+        RoomModel[] arr = new RoomModel[idToRoom.values().size()];
+        arr = idToRoom.values().toArray(arr);
+        return arr;
+    }
 }
