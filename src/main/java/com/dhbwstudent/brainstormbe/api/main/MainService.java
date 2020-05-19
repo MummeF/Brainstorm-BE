@@ -24,7 +24,7 @@ public class MainService {
     @Autowired
     private WebSocketService webSocketService;
 
-    public Long createRoom(String topic, boolean isPublic, String password, String moderatorId, String description) {
+    public Long createRoom(String topic, boolean isPublic, String moderatorId, String description) {
         long roomId;
         do {
             roomId = (long) (Math.random() * 899999) + 100000;
@@ -37,7 +37,6 @@ public class MainService {
                         .contributions(new ArrayList<>())
                         .isPublic(isPublic)
                         .state(State.CREATE)
-                        .password(password != null ? password : "")
                         .moderatorId(moderatorId)
                         .description(description != null ? description : "")
                         .build());

@@ -30,9 +30,8 @@ public class MainController {
     @RequestMapping(path = "/createRoom",
             method = RequestMethod.GET)
     public ResponseEntity<Long> createRoom(@RequestParam(required = false) String topic, @RequestParam boolean isPublic,
-                                           @RequestParam(required = false) String password, @RequestParam String moderatorId,
-                                           @RequestParam(required = false) String description) {
-        return ResponseEntity.ok(mainService.createRoom(topic, isPublic, password, moderatorId, description)); //TODO: IsPublic, password, moderatorId in FE mitaufnehmen!
+                                           @RequestParam String moderatorId, @RequestParam(required = false) String description) {
+        return ResponseEntity.ok(mainService.createRoom(topic, isPublic, moderatorId, description)); //TODO: IsPublic, password, moderatorId in FE mitaufnehmen!
     }
 
     @RequestMapping(path = "/setPassword",
