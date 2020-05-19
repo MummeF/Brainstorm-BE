@@ -11,9 +11,8 @@ import java.util.List;
 
 public class DB {
 
-
     private static Connection getConnection() throws URISyntaxException, SQLException {
-        //Wenn Java auf Heroku läuft ist URI in Systemvariable gesetzt
+        //Wenn Backend auf Heroku läuft ist URI in Systemvariable gesetzt
         //URI dbUri = new URI(System.getenv("DATABASE_URL"));
 
         //URI kann sich ändern
@@ -31,14 +30,12 @@ public class DB {
         Connection conn = getConnection();
         Statement stmt = null;
 
-        long id = room.getId();
+        long roomId = room.getId();
         String topic = room.getTopic();
-        State state = room.getState();
-        boolean isPublic = room.isPublic();
+        String description = room.getDescription();
         ArrayList<Contribution> contributions = room.getContributions();
 
-        String addRoom =  "insert into Room (id, topic, state, ispublic)" +
-                "values (" + id + ", '"+ topic +"', '"+ state +"', '"+ isPublic +"');";
+        String addRoom =  "insert into Room (roomId, topic) values (" + roomId + ", '"+ topic +"', '"+ description +"');";
         try {
             stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(addRoom);
@@ -50,9 +47,10 @@ public class DB {
             Contribution con = contributions.get(0);
             long conId = con.getId();
             String content = con.getContent();
+            String subject = con.getSubject();
             contributions.remove(0);
 
-            String addContributions = "insert into Contribution (id, roomid, contributionidnr, content) values (+"+ conId +", '" + id + "', '"+ conId +"', '"+ content +"');";
+            String addContributions = "insert into Contribution (roomId, roomid, content, subject) values ("+ conId +", " + roomId + ", '"+ content +"', '"+ subject +"');";
 
             try {
                 stmt = conn.createStatement();
@@ -67,35 +65,37 @@ public class DB {
         }
     }
 
-    public static RoomModel getRoom(long id) throws SQLException, URISyntaxException {
-
+    public static RoomModel getRoom(long roomId) throws SQLException, URISyntaxException {
 
         Connection conn = getConnection();
         Statement stmt = null;
 
-        String getRoom =  "select * from Contribution c inner join room r on (r.id = c.roomid) where r.id =" + id +";";
+        String getRoom =  "select * from Contribution c inner join room r on (r.id = c.roomid) where r.id =" + roomId +";";
 
         ArrayList<Contribution> contributions = new ArrayList<>();
-
 
         RoomModel response = null;
         try {
             stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(getRoom);
             String topic = null;
+            String description = null;
             while (rs.next()) {
                 //Room
                 topic = rs.getString("topic");
+                description = rs.getString("description");
                 //Contributions
                 String content = rs.getString("content");
+                String subject = rs.getString("subject");
                 Long conId = Long.parseLong(rs.getString("id"));
 
-                contributions.add(new Contribution(content,"",  conId));
+                contributions.add(new Contribution(content, subject,  conId));
             }
             response = RoomModel.builder()
-                    .id(id)
+                    .id(roomId)
                     .topic(topic != null ? topic : "")
                     .contributions(new ArrayList<>())
+                    .description(description != null ? description : "")
                     .build();
         } catch (SQLException e ) {
             System.out.println(e);

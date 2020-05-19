@@ -24,7 +24,7 @@ public class MainService {
     @Autowired
     private WebSocketService webSocketService;
 
-    public Long createRoom(String topic, boolean isPublic, String password, String moderatorId) {
+    public Long createRoom(String topic, boolean isPublic, String password, String moderatorId, String description) {
         long roomId;
         do {
             roomId = (long) (Math.random() * 899999) + 100000;
@@ -38,6 +38,7 @@ public class MainService {
                         .isPublic(isPublic)
                         .password(password != null ? password : "")
                         .moderatorId(moderatorId)
+                        .description(description != null ? description : "")
                         .build());
         this.updateUser();
         return roomId;
@@ -77,6 +78,14 @@ public class MainService {
         return idToRoom.get(roomId);
     }
 
+    public RoomModel getHistoryRoom(long roomId) {
+        if (getRoom(roomId).getState() == State.Done) {
+            return idToRoom.get(roomId);
+        }
+        log.warn("Getting Room denied, requested RoomID must be in State=DONE!");
+        return null;
+    }
+
     public boolean updateRoom(RoomModel roomModel) {
         if (validateRoomId(roomModel.getId())) {
             RoomModel removed = idToRoom.remove(roomModel.getId());
@@ -98,6 +107,12 @@ public class MainService {
         }
         log.warn("Adding Contribution failed, given RoomID doesn't exist");
         return false;
+    }
+
+    public boolean addContributionSubject(Contribution contribution, String subject) {
+        contribution.setSubject(subject);
+        this.updateUser();
+        return true;
     }
 
     public boolean deleteContribution(long roomId, long contributionId) {
