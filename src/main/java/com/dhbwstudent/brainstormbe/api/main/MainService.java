@@ -64,7 +64,7 @@ public class MainService {
                 }
             }
             getRoom(roomId).setState(state);
-
+            updateUser();
             return true;
         }
         log.warn("Setting State failed, given RoomID doesn't exist");
@@ -80,7 +80,7 @@ public class MainService {
     }
 
     public RoomModel getHistoryRoom(long roomId) {
-        if (getRoom(roomId).getState() == State.Done) {
+        if (getRoom(roomId).getState() == State.DONE) {
             return idToRoom.get(roomId);
         }
         log.warn("Getting Room denied, requested RoomID must be in State=DONE!");
@@ -90,6 +90,7 @@ public class MainService {
     public boolean updateRoom(RoomModel roomModel) {
         if (validateRoomId(roomModel.getId())) {
             idToRoom.get(roomModel.getId()).setTopic(roomModel.getTopic());
+            idToRoom.get(roomModel.getId()).setDescription(roomModel.getDescription());
             this.updateUser();
             return true;
         }
