@@ -88,7 +88,7 @@ public class MainController {
     @RequestMapping(path = "/getRoomList",
             method = RequestMethod.GET)
     public ResponseEntity<RoomModel[]> getRoomList() {
-       return ResponseEntity.ok(mainService.getRoomList());
+        return ResponseEntity.ok(mainService.getRoomList());
     }
 
     @RequestMapping(path = "/updateRoom",
@@ -105,9 +105,19 @@ public class MainController {
     //TODO: Endpunkt neu, in Frontend reinbringen
     @RequestMapping(path = "/setRoomState",
             method = RequestMethod.POST)
-    public ResponseEntity<String> setRoomState(@RequestParam long roomId,  @RequestParam State state) {
+    public ResponseEntity<String> setRoomState(@RequestParam long roomId, @RequestBody State state) {
         if (this.mainService.setRoomState(roomId, state)) {
             return ResponseEntity.ok("Successfully set Room '" + roomId + "' to State '" + state.value() + "'");
+
+        }
+        return ResponseEntity.badRequest().body("Could not find roomModel with id '" + roomId + "'");
+    }
+
+    @RequestMapping(path = "/increaseRoomState",
+            method = RequestMethod.GET)
+    public ResponseEntity<String> increaseRoomState(@RequestParam long roomId) {
+        if (this.mainService.increaseRoomState(roomId)) {
+            return ResponseEntity.ok("Successfully set Room '" + roomId + "' to State '" + mainService.getRoom(roomId).getState().value() + "'");
 
         }
         return ResponseEntity.badRequest().body("Could not find roomModel with id '" + roomId + "'");
