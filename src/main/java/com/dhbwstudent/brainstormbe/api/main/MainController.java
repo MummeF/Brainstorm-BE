@@ -30,13 +30,13 @@ public class MainController {
     @RequestMapping(path = "/createRoom",
             method = RequestMethod.GET)
     public ResponseEntity<Long> createRoom(@RequestParam(required = false) String topic, @RequestParam boolean isPublic,
-                                           @RequestParam(required = false) String password, @RequestParam String moderatorId) {
-        return ResponseEntity.ok(mainService.createRoom(topic, isPublic, password, moderatorId)); //TODO: IsPublic, password, moderatorId in FE mitaufnehmen!
+                                           @RequestParam(required = false) String password, @RequestParam String moderatorId,
+                                           @RequestParam(required = false) String description) {
+        return ResponseEntity.ok(mainService.createRoom(topic, isPublic, password, moderatorId, description)); //TODO: IsPublic, password, moderatorId in FE mitaufnehmen!
     }
 
     @RequestMapping(path = "/setPassword",
             method = RequestMethod.POST)
-    //TODO: Endpunkt neu, in Frontend reinbringen
     public ResponseEntity<Boolean> setPassword(@RequestParam long roomId, @RequestBody String password) {
         return ResponseEntity.ok(mainService.setPassword(roomId, password));
     }
@@ -70,6 +70,16 @@ public class MainController {
     public ResponseEntity<RoomModel> getRoom(@RequestParam long roomId) {
         if (mainService.validateRoomId(roomId)) {
             return ResponseEntity.ok(mainService.getRoom(roomId));
+        } else {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @RequestMapping(path = "/getHistoryRoom",
+            method = RequestMethod.GET)
+    public ResponseEntity<RoomModel> getHistoryRoom(@RequestParam long roomId) {
+        if (mainService.validateRoomId(roomId)) {
+            return ResponseEntity.ok(mainService.getHistoryRoom(roomId));
         } else {
             return ResponseEntity.badRequest().body(null);
         }
@@ -110,6 +120,15 @@ public class MainController {
             return ResponseEntity.ok("Successfully added Contribution to Room with id '" + roomId + "'");
         }
         return ResponseEntity.badRequest().body("Could not find roomModel with id '" + roomId + "'");
+    }
+
+    @RequestMapping(path = "/addContributionSubject",
+            method = RequestMethod.POST)
+    public ResponseEntity<String> addContributionSubject(@RequestBody Contribution contribution, @RequestParam String subject) {
+        if (this.mainService.addContributionSubject(contribution, subject)) {
+            return ResponseEntity.ok("Successfully added subject '" + subject + "' to Contribution with content '" + contribution.getContent() + "'");
+        }
+        return ResponseEntity.badRequest().body("Could not set subject for Contribution with content '" + contribution.getContent());
     }
 
     @RequestMapping(path = "/deleteContribution",
