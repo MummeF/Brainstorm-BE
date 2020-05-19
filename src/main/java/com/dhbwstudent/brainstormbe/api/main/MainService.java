@@ -210,4 +210,12 @@ public class MainService {
         log.warn("Given RoomId doesn't exist");
         return false;
     }
+
+    public boolean validateModeratorId(long roomId, String moderatorId) {
+        if(validateRoomId(roomId)){
+            return idToRoom.get(roomId).validateModeratorId(moderatorId);
+        }
+        log.warn("Given RoomId doesn't exist");
+        return false;
+    }
 }
