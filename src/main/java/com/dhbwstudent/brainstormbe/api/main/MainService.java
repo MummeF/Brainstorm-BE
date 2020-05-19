@@ -1,16 +1,15 @@
 package com.dhbwstudent.brainstormbe.api.main;
 
 
-import com.dhbwstudent.brainstormbe.model.Contribution;
-import com.dhbwstudent.brainstormbe.model.RoomModel;
-import com.dhbwstudent.brainstormbe.model.State;
-import com.dhbwstudent.brainstormbe.model.User;
+import com.dhbwstudent.brainstormbe.model.*;
 import com.dhbwstudent.brainstormbe.wss.main.WebSocketService;
 import com.dhbwstudent.brainstormbe.wss.main.model.WebSocketResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.URISyntaxException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.stream.Collectors;
@@ -59,7 +58,15 @@ public class MainService {
 
     public boolean setRoomState(long roomId, State state) {
         if (validateRoomId(roomId)) {
+            if(state == State.Done && getRoom(roomId).getState() != State.Done){
+                try {
+                    DB.saveRoom(getRoom(roomId));
+                } catch (SQLException | URISyntaxException e) {
+                   log.warn("An error occured: {}", e.getMessage(), e);
+                }
+            }
             getRoom(roomId).setState(state);
+
             return true;
         }
         log.warn("Setting State failed, given RoomID doesn't exist");

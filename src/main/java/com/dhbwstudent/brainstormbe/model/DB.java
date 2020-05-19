@@ -1,37 +1,42 @@
 package com.dhbwstudent.brainstormbe.model;
 
+import org.springframework.stereotype.Component;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class DB {
 
     //Für Testzwecke, da nicht auf die echte RoomID zugegriffen werden kann
     static public int roomID = 4711;
 
-    public static void main(String[] args) throws SQLException, URISyntaxException {
+//    public static void main(String[] args) throws SQLException, URISyntaxException {
+//
+//        /*
+//        Contribution con1 = new Contribution();
+//        con1.setContent("Beitrag1");
+//        con1.setId(1);
+//
+//        Contribution con2 = new Contribution();
+//        con2.setContent("Beitrag2");
+//        con2.setId(2);
+//
+//        RoomModel room = new RoomModel();
+//        room.setPublic(true);
+//        room.setTopic("Thema");
+//        room.addContribution(con1);
+//        room.addContribution(con2);
+//        saveRoom(room);
+//         */
+//
+//        //getRoom(roomID);
+//
+//    }
 
-        /*
-        Contribution con1 = new Contribution();
-        con1.setContent("Beitrag1");
-        con1.setId(1);
-
-        Contribution con2 = new Contribution();
-        con2.setContent("Beitrag2");
-        con2.setId(2);
-
-        RoomModel room = new RoomModel();
-        room.setPublic(true);
-        room.setTopic("Thema");
-        room.addContribution(con1);
-        room.addContribution(con2);
-        saveRoom(room);
-         */
-
-        //getRoom(roomID);
-
-    }
 
     private static Connection getConnection() throws URISyntaxException, SQLException {
         //Wenn Java auf Heroku läuft ist URI in Systemvariable gesetzt
@@ -110,8 +115,10 @@ public class DB {
         String getRoom =  "select * from Contribution c inner join room r on (r.id = c.roomid) where r.id =" + id +";";
         //System.out.println(getRoom);
 
-        ArrayList<Contribution> contributions = null;
+        ArrayList<Contribution> contributions = new ArrayList<>();
 
+
+        RoomModel response = null;
         try {
             stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(getRoom);
@@ -126,15 +133,22 @@ public class DB {
 
                 //Contributions
                 String content = rs.getString("content");
-                Long contributionIdNr = Long.parseLong(rs.getString("contributionIdNr"));
+//                Long contributionIdNr = Long.parseLong(rs.getString("contributionIdNr"));
                 Long conId = Long.parseLong(rs.getString("id"));
 
-                Contribution con = new Contribution();
-                con.setContent(content);
-                con.setId(conId);
+//                Contribution con = new Contribution();
+//                con.setContent(content);
+//                con.setId(conId);
 
-                room.addContribution(con);
+                contributions.add(new Contribution(content, conId));
+
+//                room.addContribution(con);
             }
+            response = RoomModel.builder()
+                    .id(id)
+                    .topic(topic != null ? topic : "")
+                    .contributions(new ArrayList<>())
+                    .build();
         } catch (SQLException e ) {
             System.out.println(e);
         }
@@ -144,6 +158,6 @@ public class DB {
         //room.addContribution(contributions);
 
         //System.out.println(room.toString());
-        return room;
+        return response;
     }
 }
