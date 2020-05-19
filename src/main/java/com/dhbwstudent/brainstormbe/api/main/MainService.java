@@ -36,6 +36,7 @@ public class MainService {
                         .topic(topic != null ? topic : "")
                         .contributions(new ArrayList<>())
                         .isPublic(isPublic)
+                        .state(State.CREATE)
                         .password(password != null ? password : "")
                         .moderatorId(moderatorId)
                         .build());
@@ -54,7 +55,7 @@ public class MainService {
 
     public boolean setRoomState(long roomId, State state) {
         if (validateRoomId(roomId)) {
-            if(state == State.Done && getRoom(roomId).getState() != State.Done){
+            if(state == State.DONE && getRoom(roomId).getState() != State.DONE){
                 try {
                     DB.saveRoom(getRoom(roomId));
                 } catch (SQLException | URISyntaxException e) {
@@ -79,9 +80,7 @@ public class MainService {
 
     public boolean updateRoom(RoomModel roomModel) {
         if (validateRoomId(roomModel.getId())) {
-            RoomModel removed = idToRoom.remove(roomModel.getId());
-            roomModel.setContributions(removed.getContributions());
-            idToRoom.put(roomModel.getId(), roomModel);
+            idToRoom.get(roomModel.getId()).setTopic(roomModel.getTopic());
             this.updateUser();
             return true;
         }
@@ -214,6 +213,20 @@ public class MainService {
     public boolean validateModeratorId(long roomId, String moderatorId) {
         if(validateRoomId(roomId)){
             return idToRoom.get(roomId).validateModeratorId(moderatorId);
+        }
+        log.warn("Given RoomId doesn't exist");
+        return false;
+    }
+
+    public boolean increaseRoomState(long roomId) {
+        if(validateRoomId(roomId)){
+            switch (getRoom(roomId).getState()){
+                case DONE:
+                case EDIT: //Switch-Fallthrough ist Absicht!!!
+                    return setRoomState(roomId, State.DONE);
+                case CREATE:
+                    return setRoomState(roomId, State.EDIT);
+            }
         }
         log.warn("Given RoomId doesn't exist");
         return false;

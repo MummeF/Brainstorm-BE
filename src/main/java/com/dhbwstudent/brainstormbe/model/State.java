@@ -2,7 +2,7 @@ package com.dhbwstudent.brainstormbe.model;
 
 //TODO: Enum neu, in FE implementieren
 public enum State {
-    Create("CREATE"), Edit("EDIT"), Done("DONE");
+    CREATE("CREATE"), EDIT("EDIT"), DONE("DONE");
 
     private String value;
 
