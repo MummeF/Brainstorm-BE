@@ -148,11 +148,11 @@ public class MainController {
 
     @RequestMapping(path = "/addContributionSubject",
             method = RequestMethod.POST)
-    public ResponseEntity<String> addContributionSubject(@RequestBody Contribution contribution, @RequestParam String subject) {
-        if (this.mainService.addContributionSubject(contribution, subject)) {
-            return ResponseEntity.ok("Successfully added subject '" + subject + "' to Contribution with content '" + contribution.getContent() + "'");
+    public ResponseEntity<String> addContributionSubject(@RequestParam long roomId, @RequestParam long contributionId, @RequestParam String subject) {
+        if (this.mainService.addContributionSubject(roomId, contributionId, subject)) {
+            return ResponseEntity.ok("Successfully added subject '" + subject + "' to Contribution with id '" + contributionId + "'");
         }
-        return ResponseEntity.badRequest().body("Could not set subject for Contribution with content '" + contribution.getContent());
+        return ResponseEntity.badRequest().body("Could not set subject for Contribution with id '" + contributionId + "' to subject '" + subject);
     }
 
     @RequestMapping(path = "/deleteContribution",

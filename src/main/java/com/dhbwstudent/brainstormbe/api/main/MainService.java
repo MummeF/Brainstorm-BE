@@ -108,8 +108,8 @@ public class MainService {
         return false;
     }
 
-    public boolean addContributionSubject(Contribution contribution, String subject) {
-        contribution.setSubject(subject);
+    public boolean addContributionSubject(long roomId, long contributionId, String subject) {
+        getContribution(roomId, contributionId).setSubject(subject);
         this.updateUser();
         return true;
     }
