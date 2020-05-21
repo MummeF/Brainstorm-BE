@@ -246,4 +246,21 @@ public class MainService {
         log.warn("Given RoomId doesn't exist");
         return false;
     }
+
+    public boolean validateModeratorPassword(long roomId, String moderatorPassword) {
+        if(validateRoomId(roomId)){
+            return idToRoom.get(roomId).validateModeratorPassword(moderatorPassword);
+        }
+        log.warn("Given RoomId doesn't exist");
+        return false;
+    }
+
+    public boolean setModeratorPassword(long roomId, String moderatorPassword) {
+        if (validateRoomId(roomId)) {
+            getRoom(roomId).setModeratorPassword(moderatorPassword != null ? moderatorPassword : "");
+            return true;
+        }
+        log.warn("Setting Password failed, given RoomID doesn't exist");
+        return false;
+    }
 }

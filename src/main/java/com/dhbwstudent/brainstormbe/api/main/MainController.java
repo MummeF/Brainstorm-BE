@@ -39,6 +39,11 @@ public class MainController {
     public ResponseEntity<Boolean> setPassword(@RequestParam long roomId, @RequestBody String password) {
         return ResponseEntity.ok(mainService.setPassword(roomId, password));
     }
+    @RequestMapping(path = "/setModeratorPassword",
+            method = RequestMethod.POST)
+    public ResponseEntity<Boolean> setModeratorPassword(@RequestParam long roomId, @RequestBody String moderatorPassword) {
+        return ResponseEntity.ok(mainService.setModeratorPassword(roomId, moderatorPassword));
+    }
 
     @RequestMapping(path = "/validateRoomId",
             method = RequestMethod.GET)
@@ -56,6 +61,11 @@ public class MainController {
             method = RequestMethod.GET)
     public ResponseEntity<Boolean> validateModeratorId(@RequestParam long roomId, @RequestParam String moderatorId) {
         return ResponseEntity.ok(mainService.validateModeratorId(roomId, moderatorId));
+    }
+    @RequestMapping(path = "/validateModeratorPassword",
+            method = RequestMethod.GET)
+    public ResponseEntity<Boolean> validateModeratorPassword(@RequestParam long roomId, @RequestParam String moderatorPassword) {
+        return ResponseEntity.ok(mainService.validateModeratorPassword(roomId, moderatorPassword));
     }
 
     @RequestMapping(path = "/hasPassword",
@@ -101,7 +111,7 @@ public class MainController {
         return ResponseEntity.badRequest().body("Could not find roomModel with id '" + roomModel.getId() + "'");
     }
 
-    //TODO: Endpunkt neu, in Frontend reinbringen
+
     @RequestMapping(path = "/setRoomState",
             method = RequestMethod.POST)
     public ResponseEntity<String> setRoomState(@RequestParam long roomId, @RequestBody State state) {

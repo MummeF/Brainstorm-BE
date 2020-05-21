@@ -16,6 +16,8 @@ public class RoomModel {
     private String description;
     private State state;
     private String moderatorId;
+    @Getter(AccessLevel.NONE)
+    private String moderatorPassword;
     private boolean isPublic;
     @Getter(AccessLevel.NONE)
     private String password = "";
@@ -29,7 +31,7 @@ public class RoomModel {
         this.contributions.add(contribution);
     }
 
-    public boolean hasPassword(){
+    public boolean hasPassword() {
         return this.password != null && !this.password.equals("");
     }
 
@@ -57,7 +59,12 @@ public class RoomModel {
     public boolean validatePassword(String password) {
         return password.equals(this.password);
     }
+
     public boolean validateModeratorId(String moderatorId) {
         return moderatorId.equals(this.moderatorId);
+    }
+
+    public boolean validateModeratorPassword(String password) {
+        return moderatorPassword.equals(password);
     }
 }
