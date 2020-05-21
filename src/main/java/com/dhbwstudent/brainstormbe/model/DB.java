@@ -1,12 +1,9 @@
 package com.dhbwstudent.brainstormbe.model;
 
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class DB {
@@ -35,26 +32,24 @@ public class DB {
         String description = room.getDescription();
         ArrayList<Contribution> contributions = room.getContributions();
 
-        String addRoom =  "insert into Room (roomId, topic) values (" + roomId + ", '"+ topic +"', '"+ description +"');";
+        String addRoom = "insert into Room (id, topic, description) values (" + roomId + ", '" + topic + "', '" + description + "');";
         try {
             stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(addRoom);
-        } catch (SQLException e ) {
+            stmt.executeQuery(addRoom);
+        } catch (SQLException e) {
             System.out.println(e);
         }
 
-        while(!contributions.isEmpty()) {
-            Contribution con = contributions.get(0);
-            long conId = con.getId();
-            String content = con.getContent();
-            String subject = con.getSubject();
-            contributions.remove(0);
+        for (Contribution contribution : contributions) {
+            long conId = contribution.getId();
+            String content = contribution.getContent();
+            String subject = contribution.getSubject();
 
-            String addContributions = "insert into Contribution (roomId, roomid, content, subject) values ("+ conId +", " + roomId + ", '"+ content +"', '"+ subject +"');";
+            String addContributions = "insert into Contribution ( id, roomId, content, subject) values (" + conId +", " +roomId + ", '" + content + "', '" + subject + "');";
 
             try {
                 stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(addContributions);
+                stmt.executeQuery(addContributions);
             } catch (SQLException e) {
                 System.out.println(e);
             } finally {
@@ -70,7 +65,7 @@ public class DB {
         Connection conn = getConnection();
         Statement stmt = null;
 
-        String getRoom =  "select * from Contribution c inner join room r on (r.id = c.roomid) where r.id =" + roomId +";";
+        String getRoom = "select * from Contribution c inner join room r on (r.id = c.roomid) where r.id =" + roomId + ";";
 
         ArrayList<Contribution> contributions = new ArrayList<>();
 
@@ -89,7 +84,7 @@ public class DB {
                 String subject = rs.getString("subject");
                 Long conId = Long.parseLong(rs.getString("id"));
 
-                contributions.add(new Contribution(content, subject,  conId));
+                contributions.add(new Contribution(content, subject, conId));
             }
             response = RoomModel.builder()
                     .id(roomId)
@@ -97,7 +92,7 @@ public class DB {
                     .contributions(new ArrayList<>())
                     .description(description != null ? description : "")
                     .build();
-        } catch (SQLException e ) {
+        } catch (SQLException e) {
             System.out.println(e);
         }
         return response;
