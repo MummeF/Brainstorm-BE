@@ -39,6 +39,11 @@ public class MainController {
     public ResponseEntity<Boolean> setPassword(@RequestParam long roomId, @RequestBody String password) {
         return ResponseEntity.ok(mainService.setPassword(roomId, password));
     }
+    @RequestMapping(path = "/setModeratorId",
+            method = RequestMethod.GET)
+    public ResponseEntity<Boolean> setModeratorId(@RequestParam long roomId, @RequestParam String moderatorId) {
+        return ResponseEntity.ok(mainService.setModeratorId(roomId, moderatorId));
+    }
     @RequestMapping(path = "/setModeratorPassword",
             method = RequestMethod.POST)
     public ResponseEntity<Boolean> setModeratorPassword(@RequestParam long roomId, @RequestBody String moderatorPassword) {
@@ -63,8 +68,8 @@ public class MainController {
         return ResponseEntity.ok(mainService.validateModeratorId(roomId, moderatorId));
     }
     @RequestMapping(path = "/validateModeratorPassword",
-            method = RequestMethod.GET)
-    public ResponseEntity<Boolean> validateModeratorPassword(@RequestParam long roomId, @RequestParam String moderatorPassword) {
+            method = RequestMethod.POST)
+    public ResponseEntity<Boolean> validateModeratorPassword(@RequestParam long roomId, @RequestBody String moderatorPassword) {
         return ResponseEntity.ok(mainService.validateModeratorPassword(roomId, moderatorPassword));
     }
 

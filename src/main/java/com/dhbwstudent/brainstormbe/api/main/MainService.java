@@ -263,4 +263,18 @@ public class MainService {
         log.warn("Setting Password failed, given RoomID doesn't exist");
         return false;
     }
+
+    public boolean setModeratorId(long roomId, String moderatorId) {
+        if (validateRoomId(roomId)) {
+            getRoom(roomId).setModeratorId(moderatorId != null ? moderatorId : "");
+            webSocketService.getUsers().forEach(user -> {
+                if(user.getSubscribedRooms().contains(roomId)){
+                    webSocketService.sendToUser(user.getName(), new WebSocketResponse("Mod was updated","mod-update"));
+                }
+            });
+            return true;
+        }
+        log.warn("Setting ModeratorId failed, given RoomID doesn't exist");
+        return false;
+    }
 }
