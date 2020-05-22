@@ -14,6 +14,11 @@ public class MainController {
     @Autowired
     private MainService mainService;
 
+    /***********************************************************
+     *
+     *          Common
+     *
+     ************************************************************/
 
     @RequestMapping(path = "/isAlive",
             method = RequestMethod.GET)
@@ -27,6 +32,12 @@ public class MainController {
         return ResponseEntity.ok("Wie man sieht, sieht man nichts");
     }
 
+    /***********************************************************
+     *
+     *          Room: Create and Update
+     *
+     ************************************************************/
+
     @RequestMapping(path = "/createRoom",
             method = RequestMethod.GET)
     public ResponseEntity<Long> createRoom(@RequestParam(required = false) String topic, @RequestParam boolean isPublic,
@@ -34,75 +45,13 @@ public class MainController {
         return ResponseEntity.ok(mainService.createRoom(topic, isPublic, moderatorId, description)); //TODO: IsPublic, password, moderatorId in FE mitaufnehmen!
     }
 
-    @RequestMapping(path = "/setPassword",
-            method = RequestMethod.POST)
-    public ResponseEntity<Boolean> setPassword(@RequestParam long roomId, @RequestBody String password) {
-        return ResponseEntity.ok(mainService.setPassword(roomId, password));
-    }
-    @RequestMapping(path = "/setModeratorId",
-            method = RequestMethod.GET)
-    public ResponseEntity<Boolean> setModeratorId(@RequestParam long roomId, @RequestParam String moderatorId) {
-        return ResponseEntity.ok(mainService.setModeratorId(roomId, moderatorId));
-    }
-    @RequestMapping(path = "/setModeratorPassword",
-            method = RequestMethod.POST)
-    public ResponseEntity<Boolean> setModeratorPassword(@RequestParam long roomId, @RequestBody String moderatorPassword) {
-        return ResponseEntity.ok(mainService.setModeratorPassword(roomId, moderatorPassword));
-    }
-
-    @RequestMapping(path = "/validateRoomId",
-            method = RequestMethod.GET)
-    public ResponseEntity<Boolean> validateRoomId(@RequestParam long roomId) {
-        return ResponseEntity.ok(mainService.validateRoomId(roomId));
-    }
-
-    @RequestMapping(path = "/validatePassword",
-            method = RequestMethod.POST)
-    public ResponseEntity<Boolean> validatePassword(@RequestParam long roomId, @RequestBody String password) {
-        return ResponseEntity.ok(mainService.validatePassword(roomId, password));
-    }
-
-    @RequestMapping(path = "/validateModeratorId",
-            method = RequestMethod.GET)
-    public ResponseEntity<Boolean> validateModeratorId(@RequestParam long roomId, @RequestParam String moderatorId) {
-        return ResponseEntity.ok(mainService.validateModeratorId(roomId, moderatorId));
-    }
-    @RequestMapping(path = "/validateModeratorPassword",
-            method = RequestMethod.POST)
-    public ResponseEntity<Boolean> validateModeratorPassword(@RequestParam long roomId, @RequestBody String moderatorPassword) {
-        return ResponseEntity.ok(mainService.validateModeratorPassword(roomId, moderatorPassword));
-    }
-
-    @RequestMapping(path = "/hasPassword",
-            method = RequestMethod.GET)
-    public ResponseEntity<Boolean> hasPassword(@RequestParam long roomId) {
-        return ResponseEntity.ok(mainService.hasPassword(roomId));
-    }
-
-    @RequestMapping(path = "/getRoom",
-            method = RequestMethod.GET)
-    public ResponseEntity<RoomModel> getRoom(@RequestParam long roomId) {
-        if (mainService.validateRoomId(roomId)) {
-            return ResponseEntity.ok(mainService.getRoom(roomId));
-        } else {
-            return ResponseEntity.badRequest().body(null);
+    @RequestMapping(path = "/deleteRoom",
+            method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteRoom(@RequestParam long roomId) {
+        if (mainService.deleteRoom(roomId)) {
+            return ResponseEntity.ok("Successfully deleted room!");
         }
-    }
-
-    @RequestMapping(path = "/getHistoryRoom",
-            method = RequestMethod.GET)
-    public ResponseEntity<RoomModel> getHistoryRoom(@RequestParam long roomId) {
-        if (mainService.validateRoomId(roomId)) {
-            return ResponseEntity.ok(mainService.getHistoryRoom(roomId));
-        } else {
-            return ResponseEntity.badRequest().body(null);
-        }
-    }
-
-    @RequestMapping(path = "/getRoomList",
-            method = RequestMethod.GET)
-    public ResponseEntity<RoomModel[]> getRoomList() {
-        return ResponseEntity.ok(mainService.getRoomList());
+        return ResponseEntity.badRequest().body("Unable to find room with Id '+" + roomId + "'");
     }
 
     @RequestMapping(path = "/updateRoom",
@@ -137,6 +86,103 @@ public class MainController {
         return ResponseEntity.badRequest().body("Could not find roomModel with id '" + roomId + "'");
     }
 
+
+    /***********************************************************
+     *
+     *          Room: Password and ModeratorId
+     *
+     ************************************************************/
+
+    //Moderator
+    @RequestMapping(path = "/setModeratorId",
+            method = RequestMethod.GET)
+    public ResponseEntity<Boolean> setModeratorId(@RequestParam long roomId, @RequestParam String moderatorId) {
+        return ResponseEntity.ok(mainService.setModeratorId(roomId, moderatorId));
+    }
+
+    @RequestMapping(path = "/validateModeratorId",
+            method = RequestMethod.GET)
+    public ResponseEntity<Boolean> validateModeratorId(@RequestParam long roomId, @RequestParam String moderatorId) {
+        return ResponseEntity.ok(mainService.validateModeratorId(roomId, moderatorId));
+    }
+
+
+    @RequestMapping(path = "/setModeratorPassword",
+            method = RequestMethod.POST)
+    public ResponseEntity<Boolean> setModeratorPassword(@RequestParam long roomId, @RequestBody String moderatorPassword) {
+        return ResponseEntity.ok(mainService.setModeratorPassword(roomId, moderatorPassword));
+    }
+
+    @RequestMapping(path = "/validateModeratorPassword",
+            method = RequestMethod.POST)
+    public ResponseEntity<Boolean> validateModeratorPassword(@RequestParam long roomId, @RequestBody String moderatorPassword) {
+        return ResponseEntity.ok(mainService.validateModeratorPassword(roomId, moderatorPassword));
+    }
+
+    //Password
+    @RequestMapping(path = "/setPassword",
+            method = RequestMethod.POST)
+    public ResponseEntity<Boolean> setPassword(@RequestParam long roomId, @RequestBody String password) {
+        return ResponseEntity.ok(mainService.setPassword(roomId, password));
+    }
+
+    @RequestMapping(path = "/hasPassword",
+            method = RequestMethod.GET)
+    public ResponseEntity<Boolean> hasPassword(@RequestParam long roomId) {
+        return ResponseEntity.ok(mainService.hasPassword(roomId));
+    }
+
+    @RequestMapping(path = "/validatePassword",
+            method = RequestMethod.POST)
+    public ResponseEntity<Boolean> validatePassword(@RequestParam long roomId, @RequestBody String password) {
+        return ResponseEntity.ok(mainService.validatePassword(roomId, password));
+    }
+
+
+    /***********************************************************
+     *
+     *          Room: Getter
+     *
+     ************************************************************/
+
+    @RequestMapping(path = "/getRoom",
+            method = RequestMethod.GET)
+    public ResponseEntity<RoomModel> getRoom(@RequestParam long roomId) {
+        if (mainService.validateRoomId(roomId)) {
+            return ResponseEntity.ok(mainService.getRoom(roomId));
+        } else {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @RequestMapping(path = "/validateRoomId",
+            method = RequestMethod.GET)
+    public ResponseEntity<Boolean> validateRoomId(@RequestParam long roomId) {
+        return ResponseEntity.ok(mainService.validateRoomId(roomId));
+    }
+
+    @RequestMapping(path = "/getHistoryRoom",
+            method = RequestMethod.GET)
+    public ResponseEntity<RoomModel> getHistoryRoom(@RequestParam long roomId) {
+        if (mainService.validateRoomId(roomId)) {
+            return ResponseEntity.ok(mainService.getHistoryRoom(roomId));
+        } else {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @RequestMapping(path = "/getRoomList",
+            method = RequestMethod.GET)
+    public ResponseEntity<RoomModel[]> getRoomList() {
+        return ResponseEntity.ok(mainService.getRoomList());
+    }
+
+
+    /***********************************************************
+     *
+     *          Contribution: Add and update
+     *
+     ************************************************************/
     @RequestMapping(path = "/addContribution",
             method = RequestMethod.POST)
     public ResponseEntity<String> addContribution(@RequestBody Contribution contribution, @RequestParam long roomId) {
@@ -147,12 +193,12 @@ public class MainController {
     }
 
     @RequestMapping(path = "/addContributionSubject",
-            method = RequestMethod.POST)
-    public ResponseEntity<String> addContributionSubject(@RequestBody Contribution contribution, @RequestParam String subject) {
-        if (this.mainService.addContributionSubject(contribution, subject)) {
-            return ResponseEntity.ok("Successfully added subject '" + subject + "' to Contribution with content '" + contribution.getContent() + "'");
+            method = RequestMethod.GET)
+    public ResponseEntity<String> addContributionSubject(@RequestParam long contributionId, @RequestParam long roomId, @RequestParam String subject) {
+        if (this.mainService.addContributionSubject(roomId, contributionId, subject)) {
+            return ResponseEntity.ok("Successfully added subject");
         }
-        return ResponseEntity.badRequest().body("Could not set subject for Contribution with content '" + contribution.getContent());
+        return ResponseEntity.badRequest().body("Could not set subject");
     }
 
     @RequestMapping(path = "/deleteContribution",
@@ -168,21 +214,19 @@ public class MainController {
     @RequestMapping(path = "/updateContribution",
             method = RequestMethod.PUT)
     public ResponseEntity<String> updateContribution(@RequestParam long roomId, @RequestParam long contributionId,
-                                                     @RequestParam String content, @RequestParam(required = false) String subject) {
+                                                     @RequestParam(required = false) String content, @RequestParam(required = false) String subject) {
         if (mainService.updateContribution(roomId, contributionId, content, subject)) {
             return ResponseEntity.ok("Successfully updated Contribution!");
         }
         return ResponseEntity.badRequest().body("Unable to find room or the belonging contribution");
     }
 
-    @RequestMapping(path = "/deleteRoom",
-            method = RequestMethod.DELETE)
-    public ResponseEntity<String> deleteRoom(@RequestParam long roomId) {
-        if (mainService.deleteRoom(roomId)) {
-            return ResponseEntity.ok("Successfully deleted room!");
-        }
-        return ResponseEntity.badRequest().body("Unable to find room with Id '+" + roomId + "'");
-    }
+
+    /***********************************************************
+     *
+     *          Contribution: Getter
+     *
+     ************************************************************/
 
     @RequestMapping(path = "/getContribution",
             method = RequestMethod.GET)

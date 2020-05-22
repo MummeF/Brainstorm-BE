@@ -45,11 +45,25 @@ public class RoomModel {
         return false;
     }
 
+    public boolean addContributionSubject(long contributionId, String subject) {
+        for (int i = 0; i < contributions.size(); i++) {
+            if (contributionId == contributions.get(i).getId()) {
+                contributions.get(i).setSubject(subject);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean updateContribution(long contributionId, String content, String subject) {
         for (int i = 0; i < contributions.size(); i++) {
             if (contributionId == contributions.get(i).getId()) {
-                contributions.get(i).setContent(content);
-                contributions.get(i).setSubject(subject);
+                if (content != null) {
+                    contributions.get(i).setContent(content);
+                }
+                if (subject != null) {
+                    contributions.get(i).setSubject(subject);
+                }
                 return true;
             }
         }
@@ -67,4 +81,6 @@ public class RoomModel {
     public boolean validateModeratorPassword(String password) {
         return moderatorPassword.equals(password);
     }
+
+
 }

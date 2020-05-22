@@ -108,10 +108,14 @@ public class MainService {
         return false;
     }
 
-    public boolean addContributionSubject(Contribution contribution, String subject) {
-        contribution.setSubject(subject);
-        this.updateUser();
-        return true;
+    public boolean addContributionSubject(long roomId, long contributionId, String subject) {
+        if (validateRoomId(roomId)) {
+            boolean res = getRoom(roomId).addContributionSubject(contributionId, subject);
+            this.updateUser();
+            return res;
+        }
+        log.warn("Updating Contribution failed, given RoomID doesn't exist");
+        return false;
     }
 
     public boolean deleteContribution(long roomId, long contributionId) {
