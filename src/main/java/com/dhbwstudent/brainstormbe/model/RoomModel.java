@@ -12,12 +12,12 @@ import java.util.List;
 public class RoomModel {
     @Setter(AccessLevel.NONE)
     private long id;
-    private String topic;
-    private String description;
+    private String topic = "";
+    private String description = "";
     private State state;
     private String moderatorId;
     @Getter(AccessLevel.NONE)
-    private String moderatorPassword;
+    private String moderatorPassword = "";
     private boolean isPublic;
     @Getter(AccessLevel.NONE)
     private String password = "";

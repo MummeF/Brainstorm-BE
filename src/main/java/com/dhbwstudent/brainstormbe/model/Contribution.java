@@ -9,8 +9,8 @@ import lombok.*;
 public class Contribution {
     @Setter(AccessLevel.NONE)
     private static long contributionIdNr = 0;
-    String content;
-    String subject; //Für Gruppierung
+    String content = "";
+    String subject = ""; //Für Gruppierung
     long id;
 
     public Contribution(String aContent) {
