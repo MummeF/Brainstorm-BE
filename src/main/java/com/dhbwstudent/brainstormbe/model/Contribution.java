@@ -12,6 +12,7 @@ public class Contribution {
     String content;
     String subject; //Für Gruppierung
     long id;
+
     public Contribution(String aContent) {
         this.content = aContent;
         id = generateId();
