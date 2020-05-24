@@ -84,7 +84,7 @@ public class DB {
                 String subject = rs.getString("subject");
                 Long conId = Long.parseLong(rs.getString("id"));
 
-                contributions.add(new Contribution(content, subject, conId));
+                contributions.add(new Contribution(content, subject, 0, null, conId));
             }
             response = RoomModel.builder()
                     .id(roomId)
