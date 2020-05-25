@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class DB {
@@ -24,37 +25,49 @@ public class DB {
 
     public static void saveRoom(RoomModel room) throws SQLException, URISyntaxException {
 
+        // Verbindung zur DB herstellen
         Connection conn = getConnection();
-        Statement stmt = null;
+        Statement stmt = conn.createStatement();
 
+        // Raum speichern
         long roomId = room.getId();
         String topic = room.getTopic();
         String description = room.getDescription();
-        ArrayList<Contribution> contributions = room.getContributions();
 
         String addRoom = "insert into Room (id, topic, description) values (" + roomId + ", '" + topic + "', '" + description + "');";
         try {
-            stmt = conn.createStatement();
             stmt.executeQuery(addRoom);
         } catch (SQLException e) {
             System.out.println(e);
         }
 
+        // Beiträge speichern
+        ArrayList<Contribution> contributions = room.getContributions();
         for (Contribution contribution : contributions) {
             long conId = contribution.getId();
             String content = contribution.getContent();
             String subject = contribution.getSubject();
+            int reputation = contribution.getReputation();
 
-            String addContributions = "insert into Contribution ( id, roomId, content, subject) values (" + conId +", " +roomId + ", '" + content + "', '" + subject + "');";
-
+            String addContributions = "insert into Contribution ( id, roomId, content, subject, reputation) values (" + conId +", " +roomId + ", '" + content + "', '" + subject + "', '" + reputation + "');";
             try {
-                stmt = conn.createStatement();
                 stmt.executeQuery(addContributions);
             } catch (SQLException e) {
                 System.out.println(e);
-            } finally {
-                if (stmt != null) {
-                    stmt.close();
+            }
+
+            // Kommentare speichern
+            List<Comment> comments = contribution.getComments();
+            for (Comment comment : comments) {
+                int comId = comment.getId();
+                String comContent = comment.getContent();
+                int comReputation = comment.getReputation();
+
+                String addComments = "insert into Comment ( id, contributionId, content, reputation) values (" + comId + ", " + conId + ", '" + comContent + "', '" + comReputation + "');";
+                try {
+                    stmt.executeQuery(addContributions);
+                } catch (SQLException e) {
+                    System.out.println(e);
                 }
             }
         }
@@ -62,39 +75,78 @@ public class DB {
 
     public static RoomModel getRoom(long roomId) throws SQLException, URISyntaxException {
 
-        Connection conn = getConnection();
-        Statement stmt = null;
+        // Room
+        RoomModel response;
+        String topic = null;
+        String description = null;
 
-        String getRoom = "select * from Contribution c inner join room r on (r.id = c.roomid) where r.id =" + roomId + ";";
-
+        // Contribution
         ArrayList<Contribution> contributions = new ArrayList<>();
+        String conContent;
+        String conSubject;
+        int conReputation;
+        Long conId = null;
 
-        RoomModel response = null;
+        // Comment
+        List<Comment> comments = null;
+        String comContent;
+        int comReputation;
+        int comId;
+
+        // Verbindung zur DB herstellen
+        Connection conn = getConnection();
+        Statement stmt = conn.createStatement();
+
+        // SQL Abfragen
+        String getRoom = "select * from room r where r.id =" + roomId + ";";
+        String getContribution = "select * from contribution c where c.roomId =" + roomId + ";";
+        String getComment = "select * from comment c where c.contributionId =" + conId + " order by c.contributionId;";
+
+        // Raum holen
         try {
-            stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(getRoom);
-            String topic = null;
-            String description = null;
-            while (rs.next()) {
-                //Room
-                topic = rs.getString("topic");
-                description = rs.getString("description");
-                //Contributions
-                String content = rs.getString("content");
-                String subject = rs.getString("subject");
-                Long conId = Long.parseLong(rs.getString("id"));
+            topic = rs.getString("topic");
+            description = rs.getString("description");
 
-                contributions.add(new Contribution(content, subject, 0, null, conId));
-            }
-            response = RoomModel.builder()
-                    .id(roomId)
-                    .topic(topic != null ? topic : "")
-                    .contributions(new ArrayList<>())
-                    .description(description != null ? description : "")
-                    .build();
         } catch (SQLException e) {
             System.out.println(e);
         }
+
+        // Beiträge holen
+        try {
+            ResultSet rs = stmt.executeQuery(getContribution);
+            while (rs.next()) {
+                // Einzelnen Beitrag holen
+                conContent = rs.getString("content");
+                conSubject = rs.getString("subject");
+                conReputation = Integer.parseInt(rs.getString("reputation"));
+                conId = Long.parseLong(rs.getString("id"));
+
+                // Kommentare zu einem Beitrag holen
+                ResultSet comRs = stmt.executeQuery(getComment);
+                while (comRs.next()) {
+                    // Einzelnen Kommentar holen
+                    comContent = rs.getString("content");
+                    comReputation = Integer.parseInt(rs.getString("reputation"));
+                    comId = Integer.parseInt(rs.getString("id"));
+                    if(comContent!=null) {
+                        comments.add(new Comment(comId, comContent, comReputation));
+                    }
+                }
+
+                contributions.add(new Contribution(conContent, conSubject, conReputation, comments, conId));
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
+        response = RoomModel.builder()
+            .id(roomId)
+            .topic(topic != null ? topic : "")
+            .contributions(new ArrayList<>())
+            .description(description != null ? description : "")
+            .build();
+
         return response;
     }
 }
