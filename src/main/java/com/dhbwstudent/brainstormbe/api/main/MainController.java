@@ -185,8 +185,8 @@ public class MainController {
      ************************************************************/
     @RequestMapping(path = "/addContribution",
             method = RequestMethod.POST)
-    public ResponseEntity<String> addContribution(@RequestBody Contribution contribution, @RequestParam long roomId) {
-        if (this.mainService.addContribution(contribution, roomId)) {
+    public ResponseEntity<String> addContribution(@RequestBody String content, @RequestParam long roomId) {
+        if (this.mainService.addContribution(content, roomId)) {
             return ResponseEntity.ok("Successfully added Contribution to Room with id '" + roomId + "'");
         }
         return ResponseEntity.badRequest().body("Could not find roomModel with id '" + roomId + "'");
@@ -238,4 +238,44 @@ public class MainController {
         }
         return ResponseEntity.badRequest().body(null);
     }
+    @RequestMapping(path = "/voteContributionUp",
+            method = RequestMethod.GET)
+
+    public ResponseEntity<Boolean> voteContributionUp(@RequestParam long roomId, @RequestParam long contributionId) {
+        return ResponseEntity.ok(mainService.voteContributionUp(roomId, contributionId));
+    }
+
+    @RequestMapping(path = "/voteContributionDown",
+            method = RequestMethod.GET)
+
+    public ResponseEntity<Boolean> voteContributionDown(@RequestParam long roomId, @RequestParam long contributionId) {
+        return ResponseEntity.ok(mainService.voteContributionDown(roomId, contributionId));
+    }
+
+    /***********************************************************
+     *
+     *          Comments
+     *
+     ************************************************************/
+    @RequestMapping(path = "/addComment",
+            method = RequestMethod.POST)
+
+    public ResponseEntity<Boolean> addComment(@RequestParam long roomId, @RequestParam long contributionId, @RequestBody String content) {
+        return ResponseEntity.ok(mainService.addComment(roomId, contributionId, content));
+    }
+
+    @RequestMapping(path = "/voteCommentUp",
+            method = RequestMethod.GET)
+
+    public ResponseEntity<Boolean> voteCommentUp(@RequestParam long roomId, @RequestParam long contributionId, @RequestParam long commentId) {
+        return ResponseEntity.ok(mainService.voteCommentUp(roomId, contributionId, commentId));
+    }
+
+    @RequestMapping(path = "/voteCommentDown",
+            method = RequestMethod.GET)
+
+    public ResponseEntity<Boolean> voteCommentDown(@RequestParam long roomId, @RequestParam long contributionId, @RequestParam long commentId) {
+        return ResponseEntity.ok(mainService.voteCommentDown(roomId, contributionId, commentId));
+    }
+
 }

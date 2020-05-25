@@ -45,6 +45,24 @@ public class RoomModel {
         return false;
     }
 
+    public boolean voteCommentUp(long contributionId, long commentId) {
+        for (int i = 0; i < contributions.size(); i++) {
+            if (contributions.get(i).getId() == contributionId) {
+                return contributions.get(i).voteCommentUp(commentId);
+            }
+        }
+        return false;
+    }
+
+    public boolean voteCommentDown(long contributionId, long commentId) {
+        for (int i = 0; i < contributions.size(); i++) {
+            if (contributions.get(i).getId() == contributionId) {
+                return contributions.get(i).voteCommentDown(commentId);
+            }
+        }
+        return false;
+    }
+
     public boolean addContributionSubject(long contributionId, String subject) {
         for (int i = 0; i < contributions.size(); i++) {
             if (contributionId == contributions.get(i).getId()) {
@@ -83,4 +101,32 @@ public class RoomModel {
     }
 
 
+    public boolean addComment(long contributionId, Comment comment) {
+        for (int i = 0; i < contributions.size(); i++) {
+            if (contributionId == contributions.get(i).getId()) {
+                contributions.get(i).addComment(comment);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean voteContributionDown(long contributionId) {
+        for (int i = 0; i < contributions.size(); i++) {
+            if (contributionId == contributions.get(i).getId()) {
+                contributions.get(i).voteDown();
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean voteContributionUp(long contributionId) {
+        for (int i = 0; i < contributions.size(); i++) {
+            if (contributionId == contributions.get(i).getId()) {
+                contributions.get(i).voteUp();
+                return true;
+            }
+        }
+        return false;
+    }
 }

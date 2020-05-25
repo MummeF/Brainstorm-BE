@@ -3,6 +3,7 @@ package com.dhbwstudent.brainstormbe.model;
 
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -20,13 +21,42 @@ public class Contribution {
     public Contribution(String aContent) {
         this.content = aContent;
         id = generateId();
+        reputation = 0;
+        comments = new ArrayList<>();
     }
 
-    public void addComment(Comment comment){
+    public void addComment(Comment comment) {
         comments.add(comment);
     }
 
-    public static long generateId(){
+    public boolean voteCommentUp(long id){
+        for (int i = 0; i < comments.size(); i++) {
+            if(comments.get(i).getId() == id){
+                comments.get(i).voteUp();
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean voteCommentDown(long id){
+        for (int i = 0; i < comments.size(); i++) {
+            if(comments.get(i).getId() == id){
+                comments.get(i).voteDown();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void voteUp() {
+        reputation++;
+    }
+
+    public void voteDown() {
+        reputation--;
+    }
+
+    public static long generateId() {
         return contributionIdNr++;
     }
 }

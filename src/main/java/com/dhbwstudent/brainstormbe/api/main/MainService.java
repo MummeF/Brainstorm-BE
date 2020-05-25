@@ -55,11 +55,11 @@ public class MainService {
 
     public boolean setRoomState(long roomId, State state) {
         if (validateRoomId(roomId)) {
-            if(state == State.DONE && getRoom(roomId).getState() != State.DONE){
+            if (state == State.DONE && getRoom(roomId).getState() != State.DONE) {
                 try {
                     DB.saveRoom(getRoom(roomId));
                 } catch (SQLException | URISyntaxException e) {
-                   log.warn("An error occured: {}", e.getMessage(), e);
+                    log.warn("An error occured: {}", e.getMessage(), e);
                 }
             }
             getRoom(roomId).setState(state);
@@ -78,7 +78,7 @@ public class MainService {
         return idToRoom.get(roomId);
     }
 
-    public RoomModel getHistoryRoom(long roomId) {
+    public RoomModel getHistoryRoom(long roomId) { //TODO: Der Raum muss aus der Datenbank kommen!!! (bitte inkl. Kommentar ;-) )
         if (getRoom(roomId).getState() == State.DONE) {
             return idToRoom.get(roomId);
         }
@@ -97,10 +97,10 @@ public class MainService {
         return false;
     }
 
-    public boolean addContribution(Contribution contribution, long roomId) {
+    public boolean addContribution(String content, long roomId) {
         if (validateRoomId(roomId)) {
             getRoom(roomId)
-                    .addContribution(new Contribution(contribution.getContent()));
+                    .addContribution(new Contribution(content));
             this.updateUser();
             return true;
         }
@@ -214,7 +214,7 @@ public class MainService {
     }
 
     public boolean validatePassword(long roomId, String password) {
-        if(validateRoomId(roomId)){
+        if (validateRoomId(roomId)) {
             return idToRoom.get(roomId).validatePassword(password);
         }
         log.warn("Given RoomId doesn't exist");
@@ -222,7 +222,7 @@ public class MainService {
     }
 
     public boolean hasPassword(long roomId) {
-        if(validateRoomId(roomId)){
+        if (validateRoomId(roomId)) {
             return idToRoom.get(roomId).hasPassword();
         }
         log.warn("Given RoomId doesn't exist");
@@ -230,7 +230,7 @@ public class MainService {
     }
 
     public boolean validateModeratorId(long roomId, String moderatorId) {
-        if(validateRoomId(roomId)){
+        if (validateRoomId(roomId)) {
             return idToRoom.get(roomId).validateModeratorId(moderatorId);
         }
         log.warn("Given RoomId doesn't exist");
@@ -238,8 +238,8 @@ public class MainService {
     }
 
     public boolean increaseRoomState(long roomId) {
-        if(validateRoomId(roomId)){
-            switch (getRoom(roomId).getState()){
+        if (validateRoomId(roomId)) {
+            switch (getRoom(roomId).getState()) {
                 case DONE:
                 case EDIT: //Switch-Fallthrough ist Absicht!!!
                     return setRoomState(roomId, State.DONE);
@@ -252,7 +252,7 @@ public class MainService {
     }
 
     public boolean validateModeratorPassword(long roomId, String moderatorPassword) {
-        if(validateRoomId(roomId)){
+        if (validateRoomId(roomId)) {
             return idToRoom.get(roomId).validateModeratorPassword(moderatorPassword);
         }
         log.warn("Given RoomId doesn't exist");
@@ -268,12 +268,62 @@ public class MainService {
         return false;
     }
 
+    public boolean voteCommentUp(long roomId, long contributionId, long commentId) {
+        if (validateRoomId(roomId)) {
+            boolean response = getRoom(roomId).voteCommentUp(contributionId, commentId);
+            updateUser();
+            return response;
+        }
+        log.warn("Voting up failed, given RoomID doesn't exist");
+        return false;
+    }
+
+    public boolean voteCommentDown(long roomId, long contributionId, long commentId) {
+        if (validateRoomId(roomId)) {
+            boolean response = getRoom(roomId).voteCommentDown(contributionId, commentId);
+            updateUser();
+            return response;
+        }
+        log.warn("Voting down failed, given RoomID doesn't exist");
+        return false;
+    }
+    public boolean voteContributionUp(long roomId, long contributionId) {
+        if (validateRoomId(roomId)) {
+            boolean response = getRoom(roomId).voteContributionUp(contributionId);
+            updateUser();
+            return response;
+        }
+        log.warn("Voting up failed, given RoomID doesn't exist");
+        return false;
+    }
+
+    public boolean voteContributionDown(long roomId, long contributionId) {
+        if (validateRoomId(roomId)) {
+            boolean response = getRoom(roomId).voteContributionDown(contributionId);
+            updateUser();
+            return response;
+        }
+        log.warn("Voting down failed, given RoomID doesn't exist");
+        return false;
+    }
+
+    public boolean addComment(long roomId, long contributionId, String content) {
+        if (validateRoomId(roomId)) {
+            boolean response = getRoom(roomId).addComment(contributionId, new Comment(content));
+            updateUser();
+            return response;
+        }
+        log.warn("Creating comment failed, given RoomID doesn't exist");
+        return false;
+    }
+
+
     public boolean setModeratorId(long roomId, String moderatorId) {
         if (validateRoomId(roomId)) {
             getRoom(roomId).setModeratorId(moderatorId != null ? moderatorId : "");
             webSocketService.getUsers().forEach(user -> {
-                if(user.getSubscribedRooms().contains(roomId)){
-                    webSocketService.sendToUser(user.getName(), new WebSocketResponse("Mod was updated","mod-update"));
+                if (user.getSubscribedRooms().contains(roomId)) {
+                    webSocketService.sendToUser(user.getName(), new WebSocketResponse("Mod was updated", "mod-update"));
                 }
             });
             return true;
