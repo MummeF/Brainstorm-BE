@@ -129,9 +129,9 @@ public class DB {
                 comments = new ArrayList<>(); //comments muss für jeden Beitrag jeweils neu initialisiert werden
                 while (comRs.next()) {
                     // Einzelnen Kommentar holen
-                    comContent = rs.getString("content");
-                    comReputation = Integer.parseInt(rs.getString("reputation"));
-                    comId = Integer.parseInt(rs.getString("id"));
+                    comContent = comRs.getString("content");
+                    comReputation = Integer.parseInt(comRs.getString("reputation"));
+                    comId = Integer.parseInt(comRs.getString("id"));
                     if(comContent!=null) {
                         comments.add(new Comment(comId, comContent, comReputation));
                     }
