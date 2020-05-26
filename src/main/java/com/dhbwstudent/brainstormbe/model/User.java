@@ -21,16 +21,10 @@ public class User {
         return subscribedRooms.isEmpty();
     }
 
-    public void subscribe(long roomId) { //TODO: Methode töten, neue überladene Methode nutzen
+    public void subscribe(long roomId) {
         subscribedRooms.add(roomId);
     }
 
-    public void subscribe(long roomId, String pw) {
-        if (MainService.getRoom(roomId).validatePassword(pw))
-            subscribedRooms.add(roomId);
-        //else?? TODO: Muss der User informiert werden wenn er versucht einem PW-geschützten
-        // Raum beizutreten, bzw. dass PW falsch ist?
-    }
 
     public boolean unsubscribe(long roomId){
         return subscribedRooms.remove(roomId);
