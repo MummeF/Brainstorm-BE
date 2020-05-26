@@ -102,7 +102,7 @@ public class DB {
         // SQL Abfragen
         String getRoom = "select * from room r where r.id =" + roomId + ";";
         String getContribution = "select * from contribution c where c.roomId =" + roomId + ";";
-        String getComment = "select * from comment c where c.contributionId =" + conId + " order by c.contributionId;";
+        String getComment = "select * from comment c where c.contributionId =" + conId + " AND roomId = " + roomId + " order by c.contributionId;";
 
         // Raum holen
         try {
