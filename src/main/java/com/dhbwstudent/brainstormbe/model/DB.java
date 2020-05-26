@@ -33,8 +33,8 @@ public class DB {
 
         // Raum speichern
         long roomId = room.getId();
-        String topic = room.getTopic();
-        String description = room.getDescription();
+        String topic = room.getTopic() != null ? room.getTopic() : "";
+        String description = room.getDescription() != null ? room.getDescription() : "";
 
         String addRoom = "insert into Room (id, topic, description) values (" + roomId + ", '" + topic + "', '" + description + "');";
         try {
@@ -47,8 +47,8 @@ public class DB {
         ArrayList<Contribution> contributions = room.getContributions();
         for (Contribution contribution : contributions) {
             long conId = contribution.getId();
-            String content = contribution.getContent();
-            String subject = contribution.getSubject();
+            String content = contribution.getContent() != null ? contribution.getContent() : "";
+            String subject = contribution.getSubject() != null ? contribution.getSubject() : "";
             int reputation = contribution.getReputation();
 
             String addContributions = "insert into Contribution ( id, roomId, content, subject, reputation) values (" + conId +", " +roomId + ", '" + content + "', '" + subject + "', '" + reputation + "');";
@@ -62,7 +62,7 @@ public class DB {
             List<Comment> comments = contribution.getComments();
             for (Comment comment : comments) {
                 int comId = comment.getId();
-                String comContent = comment.getContent();
+                String comContent = comment.getContent() != null ? comment.getContent() : "";
                 int comReputation = comment.getReputation();
 
                 String addComments = "insert into Comment ( id, roomId, contributionId, content, reputation) values (" + comId + ", " + roomId + "," + conId + ", '" + comContent + "', '" + comReputation + "');";
