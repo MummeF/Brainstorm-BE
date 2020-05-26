@@ -28,7 +28,7 @@ public class MainService {
         long roomId;
         do {
             roomId = (long) (Math.random() * 899999) + 100000;
-        } while (validateRoomId(roomId));
+        } while (validateRoomIdPlusHistory(roomId));
 
         idToRoom.put(roomId,
                 RoomModel.builder()
@@ -73,6 +73,13 @@ public class MainService {
     public boolean validateRoomId(long roomId) {
         return idToRoom.containsKey(roomId);
     }
+    public boolean validateRoomIdPlusHistory(long roomId) {
+        try {
+            return idToRoom.containsKey(roomId) || DB.roomExists(roomId);
+        } catch (SQLException | URISyntaxException e) {
+           return false;
+        }
+    }
 
     public static RoomModel getRoom(long roomId) { //Da die HashMap auch static ist, spricht nix dagegen diese Methode ebenfalls static zu dekl.
         return idToRoom.get(roomId);
@@ -80,6 +87,10 @@ public class MainService {
 
     public RoomModel getHistoryRoom(long roomId) {
         //Abfrage ob State=DONE ist obsolet, der Raum muss ja == DONE sein wenn dieser in der DB zu finden ist
+        if(validateRoomId(roomId)){
+            return getRoom(roomId);
+        }
+        //Fallback: Ist nicht mehr im lokalen Speicher
         try {
             if (DB.roomExists(roomId)) {
                 return DB.getRoom(roomId);

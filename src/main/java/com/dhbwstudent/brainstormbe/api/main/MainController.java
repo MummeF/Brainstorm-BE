@@ -164,8 +164,9 @@ public class MainController {
     @RequestMapping(path = "/getHistoryRoom",
             method = RequestMethod.GET)
     public ResponseEntity<RoomModel> getHistoryRoom(@RequestParam long roomId) {
-        if (mainService.validateRoomId(roomId)) {
-            return ResponseEntity.ok(mainService.getHistoryRoom(roomId));
+        RoomModel response = mainService.getHistoryRoom(roomId);
+        if (response != null) {
+            return ResponseEntity.ok((response));
         } else {
             return ResponseEntity.badRequest().body(null);
         }
@@ -238,6 +239,7 @@ public class MainController {
         }
         return ResponseEntity.badRequest().body(null);
     }
+
     @RequestMapping(path = "/voteContributionUp",
             method = RequestMethod.GET)
 
