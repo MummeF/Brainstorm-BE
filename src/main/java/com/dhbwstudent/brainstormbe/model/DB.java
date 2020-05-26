@@ -82,18 +82,8 @@ public class DB {
         String topic = null;
         String description = null;
 
-        // Contribution
-        ArrayList<Contribution> contributions = new ArrayList<>();
-        String conContent;
-        String conSubject;
-        int conReputation;
-        Long conId = null;
 
-        // Comment
-        List<Comment> comments;
-        String comContent;
-        int comReputation;
-        int comId;
+
 
         // Verbindung zur DB herstellen
         Connection conn = getConnection();
@@ -102,7 +92,6 @@ public class DB {
         // SQL Abfragen
         String getRoom = "select * from room r where r.id =" + roomId + ";";
         String getContribution = "select * from contribution c where c.roomId =" + roomId + ";";
-        String getComment = "select * from comment c where c.contributionId =" + conId + " AND roomId = " + roomId + " order by c.contributionId;";
 
         // Raum holen
         try {
@@ -116,9 +105,15 @@ public class DB {
         }
 
         // Beiträge holen
+        ArrayList<Contribution> contributions = new ArrayList<>();
         try {
             ResultSet rs = stmt.executeQuery(getContribution);
             while (rs.next()) {
+                // Contribution
+                String conContent;
+                String conSubject;
+                int conReputation;
+                Long conId = null;
                 // Einzelnen Beitrag holen
                 conContent = rs.getString("content");
                 conSubject = rs.getString("subject");
@@ -127,9 +122,16 @@ public class DB {
 
                 // Kommentare zu einem Beitrag holen
                 Statement comStmt = conn.createStatement();
+                String getComment = "select * from comment c where c.contributionId =" + conId + " AND roomId = " + roomId + " order by c.contributionId;";
                 ResultSet comRs = comStmt.executeQuery(getComment);
-                comments = new ArrayList<>(); //comments muss für jeden Beitrag jeweils neu initialisiert werden
+
+                List<Comment> comments = new ArrayList<>(); //comments muss für jeden Beitrag jeweils neu initialisiert werden
                 while (comRs.next()) {
+
+                    // Comment
+                    String comContent;
+                    int comReputation;
+                    int comId;
                     // Einzelnen Kommentar holen
                     comContent = comRs.getString("content");
                     comReputation = Integer.parseInt(comRs.getString("reputation"));
