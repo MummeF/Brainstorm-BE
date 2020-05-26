@@ -65,7 +65,7 @@ public class DB {
                 String comContent = comment.getContent();
                 int comReputation = comment.getReputation();
 
-                String addComments = "insert into Comment ( id, contributionId, content, reputation) values (" + comId + ", " + conId + ", '" + comContent + "', '" + comReputation + "');";
+                String addComments = "insert into Comment ( id, roomId, contributionId, content, reputation) values (" + comId + ", " + roomId + "," + conId + ", '" + comContent + "', '" + comReputation + "');";
                 try {
                     stmt.executeQuery(addComments);
                 } catch (SQLException e) {
