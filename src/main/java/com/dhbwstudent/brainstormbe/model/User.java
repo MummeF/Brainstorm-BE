@@ -17,14 +17,13 @@ public class User {
         this.name = name;
     }
 
-    public boolean anyRoomSubscribed(){
+    public boolean anyRoomSubscribed() {
         return subscribedRooms.isEmpty();
     }
 
     public void subscribe(long roomId) {
         subscribedRooms.add(roomId);
     }
-
 
     public boolean unsubscribe(long roomId){
         return subscribedRooms.remove(roomId);

@@ -94,8 +94,7 @@ public class MainService {
         try {
             if (DB.roomExists(roomId)) {
                 return DB.getRoom(roomId);
-            }
-            else {
+            } else {
                 log.warn("Given roomId for HistoryRoom doesn't exist!");
                 return null;
             }

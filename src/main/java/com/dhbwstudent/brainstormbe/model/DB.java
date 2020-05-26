@@ -107,9 +107,10 @@ public class DB {
         // Raum holen
         try {
             ResultSet rs = stmt.executeQuery(getRoom);
-            topic = rs.getString("topic");
-            description = rs.getString("description");
-
+            if(rs.next()) {
+                topic = rs.getString("topic");
+                description = rs.getString("description");
+            }
         } catch (SQLException e) {
             System.out.println(e);
         }
@@ -125,7 +126,8 @@ public class DB {
                 conId = Long.parseLong(rs.getString("id"));
 
                 // Kommentare zu einem Beitrag holen
-                ResultSet comRs = stmt.executeQuery(getComment);
+                Statement comStmt = conn.createStatement();
+                ResultSet comRs = comStmt.executeQuery(getComment);
                 comments = new ArrayList<>(); //comments muss für jeden Beitrag jeweils neu initialisiert werden
                 while (comRs.next()) {
                     // Einzelnen Kommentar holen
@@ -163,8 +165,12 @@ public class DB {
         // Schauen ob Raum vorhanden
         try {
             ResultSet rs = stmt.executeQuery(getRoom);
-            anzahl = rs.getInt("anzahl");
-            return anzahl == 1;
+            if(rs.next()) {
+                anzahl = rs.getInt("anzahl");
+                return anzahl == 1;
+            }else{
+                return false;
+            }
         } catch (SQLException e) {
             System.out.println(e);
             return false;
