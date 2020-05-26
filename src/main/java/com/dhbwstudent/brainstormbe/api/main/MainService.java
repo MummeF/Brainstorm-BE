@@ -78,11 +78,20 @@ public class MainService {
         return idToRoom.get(roomId);
     }
 
-    public RoomModel getHistoryRoom(long roomId) { //TODO: Der Raum muss aus der Datenbank kommen!!! (bitte inkl. Kommentar ;-) )
-        if (getRoom(roomId).getState() == State.DONE) {
-            return idToRoom.get(roomId);
+    public RoomModel getHistoryRoom(long roomId) {
+        //Abfrage ob State=DONE ist obsolet, der Raum muss ja == DONE sein wenn dieser in der DB zu finden ist
+        try {
+            if (DB.roomExists(roomId)) {
+                return DB.getRoom(roomId);
+            }
+            else {
+                log.warn("Given roomId for HistoryRoom doesn't exist!");
+                return null;
+            }
+        } catch (SQLException | URISyntaxException e) {
+            log.warn("An error occured: {}", e.getMessage(), e);
         }
-        log.warn("Getting Room denied, requested RoomID must be in State=DONE!");
+
         return null;
     }
 

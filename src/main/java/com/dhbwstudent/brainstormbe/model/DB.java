@@ -1,12 +1,14 @@
 package com.dhbwstudent.brainstormbe.model;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Slf4j
 public class DB {
 
     private static Connection getConnection() throws URISyntaxException, SQLException {
@@ -65,7 +67,7 @@ public class DB {
 
                 String addComments = "insert into Comment ( id, contributionId, content, reputation) values (" + comId + ", " + conId + ", '" + comContent + "', '" + comReputation + "');";
                 try {
-                    stmt.executeQuery(addContributions);
+                    stmt.executeQuery(addComments);
                 } catch (SQLException e) {
                     System.out.println(e);
                 }
@@ -88,7 +90,7 @@ public class DB {
         Long conId = null;
 
         // Comment
-        List<Comment> comments = null;
+        List<Comment> comments;
         String comContent;
         int comReputation;
         int comId;
@@ -124,6 +126,7 @@ public class DB {
 
                 // Kommentare zu einem Beitrag holen
                 ResultSet comRs = stmt.executeQuery(getComment);
+                comments = new ArrayList<>(); //comments muss für jeden Beitrag jeweils neu initialisiert werden
                 while (comRs.next()) {
                     // Einzelnen Kommentar holen
                     comContent = rs.getString("content");
@@ -133,7 +136,6 @@ public class DB {
                         comments.add(new Comment(comId, comContent, comReputation));
                     }
                 }
-
                 contributions.add(new Contribution(conContent, conSubject, conReputation, comments, conId));
             }
         } catch (SQLException e) {
@@ -143,10 +145,29 @@ public class DB {
         response = RoomModel.builder()
             .id(roomId)
             .topic(topic != null ? topic : "")
-            .contributions(new ArrayList<>())
+            .contributions(contributions)
             .description(description != null ? description : "")
             .build();
 
         return response;
+    }
+
+    public static boolean roomExists(long roomId) throws SQLException, URISyntaxException {
+        String getRoom = "select COUNT(*) AS anzahl FROM room r WHERE r.id =" + roomId + ";";
+        int anzahl;
+
+        // Verbindung zur DB herstellen
+        Connection conn = getConnection();
+        Statement stmt = conn.createStatement();
+
+        // Schauen ob Raum vorhanden
+        try {
+            ResultSet rs = stmt.executeQuery(getRoom);
+            anzahl = rs.getInt("anzahl");
+            return anzahl == 1;
+        } catch (SQLException e) {
+            System.out.println(e);
+            return false;
+        }
     }
 }
