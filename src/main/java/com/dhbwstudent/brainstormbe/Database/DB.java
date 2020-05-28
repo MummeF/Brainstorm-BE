@@ -1,5 +1,8 @@
-package com.dhbwstudent.brainstormbe.model;
+package com.dhbwstudent.brainstormbe.Database;
 
+import com.dhbwstudent.brainstormbe.model.Comment;
+import com.dhbwstudent.brainstormbe.model.Contribution;
+import com.dhbwstudent.brainstormbe.model.RoomModel;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
@@ -32,7 +35,7 @@ public class DB {
     public static void saveRoom(RoomModel room) throws SQLException, URISyntaxException {
 
         // Verbindung zur DB herstellen
-        if(conn == null){
+        if (conn == null) {
             conn = getConnection();
         }
         Statement stmt = conn.createStatement();
@@ -84,7 +87,7 @@ public class DB {
     public static RoomModel getRoom(long roomId) throws SQLException, URISyntaxException {
 
         // Verbindung zur DB herstellen
-        if(conn == null){
+        if (conn == null) {
             conn = getConnection();
         }
         Statement stmt = conn.createStatement();
@@ -150,7 +153,7 @@ public class DB {
         int anzahl;
 
         // Verbindung zur DB herstellen
-        if(conn == null){
+        if (conn == null) {
             conn = getConnection();
         }
         Statement stmt = conn.createStatement();
@@ -167,6 +170,16 @@ public class DB {
         } catch (SQLException e) {
             System.out.println(e);
             return false;
+        }
+    }
+
+    public static void closeConnection() {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                log.error("error occured while closing connection:", e);
+            }
         }
     }
 }

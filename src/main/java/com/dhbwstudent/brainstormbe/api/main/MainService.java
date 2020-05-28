@@ -1,6 +1,7 @@
 package com.dhbwstudent.brainstormbe.api.main;
 
 
+import com.dhbwstudent.brainstormbe.Database.DB;
 import com.dhbwstudent.brainstormbe.model.*;
 import com.dhbwstudent.brainstormbe.wss.main.WebSocketService;
 import com.dhbwstudent.brainstormbe.wss.main.model.WebSocketResponse;
