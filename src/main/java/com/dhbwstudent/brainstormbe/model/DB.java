@@ -12,10 +12,7 @@ import java.util.List;
 public class DB {
 
     private static Connection getConnection() throws URISyntaxException, SQLException {
-        //Wenn Backend auf Heroku läuft ist URI in Systemvariable gesetzt
-        //URI dbUri = new URI(System.getenv("DATABASE_URL"));
-
-        //URI kann sich ändern
+        // URI enthält alle Informationen zur Datenbank
         URI dbUri = new URI("postgres://rhbihpjdnxsfdr:1fa5c355a80498fe6d87f7ed43bef896ec8e6dcdece2f22cd74f38483d8f5ae9@ec2-3-223-21-106.compute-1.amazonaws.com:5432/ddku9gq08m6b9o");
 
         String username = dbUri.getUserInfo().split(":")[0];
@@ -77,34 +74,14 @@ public class DB {
 
     public static RoomModel getRoom(long roomId) throws SQLException, URISyntaxException {
 
-        // Room
-        RoomModel response;
-        String topic = null;
-        String description = null;
-
-        // Contribution
-        ArrayList<Contribution> contributions = new ArrayList<>();
-        String conContent;
-        String conSubject;
-        int conReputation;
-        Long conId = null;
-
-        // Comment
-        List<Comment> comments;
-        String comContent;
-        int comReputation;
-        int comId;
-
         // Verbindung zur DB herstellen
         Connection conn = getConnection();
         Statement stmt = conn.createStatement();
 
-        // SQL Abfragen
-        String getRoom = "select * from room r where r.id =" + roomId + ";";
-        String getContribution = "select * from contribution c where c.roomId =" + roomId + ";";
-        String getComment = "select * from comment c where c.contributionId =" + conId + " AND roomId = " + roomId + " order by c.contributionId;";
-
         // Raum holen
+        String topic = null;
+        String description = null;
+        String getRoom = "select * from room r where r.id =" + roomId + ";";
         try {
             ResultSet rs = stmt.executeQuery(getRoom);
             if(rs.next()) {
@@ -116,24 +93,27 @@ public class DB {
         }
 
         // Beiträge holen
+        ArrayList<Contribution> contributions = new ArrayList<>();
+        String getContribution = "select * from contribution c where c.roomId =" + roomId + ";";
         try {
             ResultSet rs = stmt.executeQuery(getContribution);
             while (rs.next()) {
                 // Einzelnen Beitrag holen
-                conContent = rs.getString("content");
-                conSubject = rs.getString("subject");
-                conReputation = Integer.parseInt(rs.getString("reputation"));
-                conId = Long.parseLong(rs.getString("id"));
+                String conContent = rs.getString("content");
+                String conSubject = rs.getString("subject");
+                int conReputation = rs.getInt("reputation");
+                Long conId = Long.parseLong(rs.getString("id"));
 
                 // Kommentare zu einem Beitrag holen
                 Statement comStmt = conn.createStatement();
+                String getComment = "select * from comment c where c.contributionId =" + conId + " AND roomId = " + roomId + " order by c.contributionId;";
                 ResultSet comRs = comStmt.executeQuery(getComment);
-                comments = new ArrayList<>(); //comments muss für jeden Beitrag jeweils neu initialisiert werden
+                List<Comment> comments = new ArrayList<>(); //comments muss für jeden Beitrag jeweils neu initialisiert werden
                 while (comRs.next()) {
                     // Einzelnen Kommentar holen
-                    comContent = comRs.getString("content");
-                    comReputation = Integer.parseInt(comRs.getString("reputation"));
-                    comId = Integer.parseInt(comRs.getString("id"));
+                    String comContent = comRs.getString("content");
+                    int comReputation = comRs.getInt("reputation");
+                    int comId = comRs.getInt("id");
                     if(comContent!=null) {
                         comments.add(new Comment(comId, comContent, comReputation));
                     }
@@ -144,7 +124,7 @@ public class DB {
             System.out.println(e);
         }
 
-        response = RoomModel.builder()
+        RoomModel response = RoomModel.builder()
             .id(roomId)
             .topic(topic != null ? topic : "")
             .contributions(contributions)
