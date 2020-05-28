@@ -11,21 +11,30 @@ import java.util.List;
 @Slf4j
 public class DB {
 
-    private static Connection getConnection() throws URISyntaxException, SQLException {
+    private static Connection getConnection() {
         // URI enthält alle Informationen zur Datenbank
-        URI dbUri = new URI("postgres://rhbihpjdnxsfdr:1fa5c355a80498fe6d87f7ed43bef896ec8e6dcdece2f22cd74f38483d8f5ae9@ec2-3-223-21-106.compute-1.amazonaws.com:5432/ddku9gq08m6b9o");
+        try {
+            URI dbUri = new URI("postgres://rhbihpjdnxsfdr:1fa5c355a80498fe6d87f7ed43bef896ec8e6dcdece2f22cd74f38483d8f5ae9@ec2-3-223-21-106.compute-1.amazonaws.com:5432/ddku9gq08m6b9o");
 
-        String username = dbUri.getUserInfo().split(":")[0];
-        String password = dbUri.getUserInfo().split(":")[1];
-        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
+            String username = dbUri.getUserInfo().split(":")[0];
+            String password = dbUri.getUserInfo().split(":")[1];
+            String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
 
-        return DriverManager.getConnection(dbUrl, username, password);
+            return DriverManager.getConnection(dbUrl, username, password);
+        } catch (Exception e) {
+            log.error("Error occured while connection to db:", e);
+            return null;
+        }
     }
+
+    private static Connection conn = getConnection();
 
     public static void saveRoom(RoomModel room) throws SQLException, URISyntaxException {
 
         // Verbindung zur DB herstellen
-        Connection conn = getConnection();
+        if(conn == null){
+            conn = getConnection();
+        }
         Statement stmt = conn.createStatement();
 
         // Raum speichern
@@ -48,7 +57,7 @@ public class DB {
             String subject = contribution.getSubject() != null ? contribution.getSubject() : "";
             int reputation = contribution.getReputation();
 
-            String addContributions = "insert into Contribution ( id, roomId, content, subject, reputation) values (" + conId +", " +roomId + ", '" + content + "', '" + subject + "', '" + reputation + "');";
+            String addContributions = "insert into Contribution ( id, roomId, content, subject, reputation) values (" + conId + ", " + roomId + ", '" + content + "', '" + subject + "', '" + reputation + "');";
             try {
                 stmt.executeQuery(addContributions);
             } catch (SQLException e) {
@@ -75,7 +84,9 @@ public class DB {
     public static RoomModel getRoom(long roomId) throws SQLException, URISyntaxException {
 
         // Verbindung zur DB herstellen
-        Connection conn = getConnection();
+        if(conn == null){
+            conn = getConnection();
+        }
         Statement stmt = conn.createStatement();
 
         // Raum holen
@@ -84,7 +95,7 @@ public class DB {
         String getRoom = "select * from room r where r.id =" + roomId + ";";
         try {
             ResultSet rs = stmt.executeQuery(getRoom);
-            if(rs.next()) {
+            if (rs.next()) {
                 topic = rs.getString("topic");
                 description = rs.getString("description");
             }
@@ -114,7 +125,7 @@ public class DB {
                     String comContent = comRs.getString("content");
                     int comReputation = comRs.getInt("reputation");
                     int comId = comRs.getInt("id");
-                    if(comContent!=null) {
+                    if (comContent != null) {
                         comments.add(new Comment(comId, comContent, comReputation));
                     }
                 }
@@ -125,11 +136,11 @@ public class DB {
         }
 
         RoomModel response = RoomModel.builder()
-            .id(roomId)
-            .topic(topic != null ? topic : "")
-            .contributions(contributions)
-            .description(description != null ? description : "")
-            .build();
+                .id(roomId)
+                .topic(topic != null ? topic : "")
+                .contributions(contributions)
+                .description(description != null ? description : "")
+                .build();
 
         return response;
     }
@@ -139,16 +150,18 @@ public class DB {
         int anzahl;
 
         // Verbindung zur DB herstellen
-        Connection conn = getConnection();
+        if(conn == null){
+            conn = getConnection();
+        }
         Statement stmt = conn.createStatement();
 
         // Schauen ob Raum vorhanden
         try {
             ResultSet rs = stmt.executeQuery(getRoom);
-            if(rs.next()) {
+            if (rs.next()) {
                 anzahl = rs.getInt("anzahl");
                 return anzahl == 1;
-            }else{
+            } else {
                 return false;
             }
         } catch (SQLException e) {
