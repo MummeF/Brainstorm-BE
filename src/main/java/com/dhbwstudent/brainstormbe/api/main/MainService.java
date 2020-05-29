@@ -150,7 +150,7 @@ public class MainService {
 
     public boolean updateContribution(long roomId, long contributionId, String content, String subject) {
         if (validateRoomId(roomId)) {
-            boolean res = getRoom(roomId).updateContribution(contributionId, content, subject != null ? subject : "");
+            boolean res = getRoom(roomId).updateContribution(contributionId, content, subject);
             this.updateUser();
             return res;
         }
