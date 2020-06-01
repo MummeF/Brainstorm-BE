@@ -16,11 +16,12 @@ public class Contribution {
     String subject; //Für Gruppierung
     private int reputation;
     private List<Comment> comments;
+    @Setter(AccessLevel.NONE)
     long id;
 
     public Contribution(String aContent) {
         this.content = aContent;
-        id = generateId();
+        id = contributionIdNr++;
         reputation = 0;
         comments = new ArrayList<>();
     }
@@ -54,9 +55,5 @@ public class Contribution {
 
     public void voteDown() {
         reputation--;
-    }
-
-    public static long generateId() {
-        return contributionIdNr++;
     }
 }
