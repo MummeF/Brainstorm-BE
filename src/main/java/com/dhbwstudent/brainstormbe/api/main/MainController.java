@@ -114,7 +114,6 @@ public class MainController {
         return ResponseEntity.ok(mainService.validateModeratorPassword(roomId, moderatorPassword));
     }
 
-    //Password
     @RequestMapping(path = "/setPassword",
             method = RequestMethod.POST)
     public ResponseEntity<Boolean> setPassword(@RequestParam long roomId, @RequestBody String password) {

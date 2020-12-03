@@ -130,7 +130,7 @@ public class MainService {
 
     public boolean addContributionSubject(long roomId, long contributionId, String subject) {
         if (validateRoomId(roomId)) {
-            boolean res = getRoom(roomId).addContributionSubject(contributionId, subject);
+            boolean res = getRoom(roomId).addContributionSubject(contributionId, subject == null ? "" : subject);
             this.updateUser();
             return res;
         }

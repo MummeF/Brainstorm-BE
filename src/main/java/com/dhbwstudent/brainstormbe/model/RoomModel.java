@@ -22,7 +22,7 @@ public class RoomModel {
     private String moderatorPassword;
     private boolean isPublic;
     @Getter(AccessLevel.NONE)
-    private String password = "";
+    private String password;
     private ArrayList<Contribution> contributions = new ArrayList<>();
 
     public void addContribution(List<Contribution> contributions) {
