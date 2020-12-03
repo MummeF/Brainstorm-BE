@@ -1,5 +1,6 @@
 package com.dhbwstudent.brainstormbe.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class RoomModel {
     private String topic;
     private String description;
     private State state;
+    @JsonIgnore
     private String moderatorId;
     @Getter(AccessLevel.NONE)
     private String moderatorPassword;
